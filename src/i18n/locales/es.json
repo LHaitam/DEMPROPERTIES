@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "properties": "Propiedades",
+    "about": "Sobre Nosotros",
+    "contact": "Contacto"
+  },
+  "home": {
+    "loading": "Una experiencia inmobiliaria cuidada"
+  },
+  "hero": {
+    "brand": "Propiedades",
+    "subtitle": "Propiedades cuidadosamente seleccionadas en Marbella, con un enfoque basado en la discreción, la arquitectura y la ubicación.",
+    "ctaProperties": "Ver Propiedades",
+    "ctaContact": "Contacto Privado",
+    "signature": "Desde 2019 — Asesoría inmobiliaria en Marbella"
+  },
+  "emotion": {
+    "eyebrow": "Visión de la fundadora",
+    "quote": "Mi visión del sector inmobiliario va más allá de las propiedades.\nSe trata de crear servicios diseñados en torno al estilo de vida, las expectativas y las ambiciones de cada cliente.",
+    "role": "Fundadora y asesora principal",
+    "imageAlt": "Fundadora de una asesoría inmobiliaria en Marbella"
+  },
+  "featured": {
+    "eyebrow": "Propiedades seleccionadas",
+    "title": "Propiedades destacadas",
+    "subtitle": "Una selección cuidada de propiedades disponibles actualmente en Marbella y alrededores.",
+    "cta": "Ver todas las propiedades",
+    "loading": "Preparando la selección…"
+  },
+  "statement": {
+    "text": "Servicios inmobiliarios discretos, adaptados a cada cliente"
+  },
+  "whyUs": {
+    "eyebrow": "Por Qué Elegirnos",
+    "title": {
+      "line1": "Una experiencia inmobiliaria",
+      "line2": "bien pensada"
+    },
+    "subtitle": "Construida sobre claridad, discreción y una comprensión precisa de las expectativas de nuestros clientes.",
+    "items": {
+      "curated": {
+        "title": "Propiedades Seleccionadas",
+        "text": "Cada propiedad se elige por su ubicación, calidad y relevancia a largo plazo. La calidad siempre prima sobre la cantidad."
+      },
+      "tailored": {
+        "title": "Asesoramiento Personalizado",
+        "text": "Un enfoque flexible adaptado a tus objetivos, estilo de vida y plazos."
+      },
+      "local": {
+        "title": "Conocimiento Local",
+        "text": "Con base en Marbella, ofrecemos información fiable y acceso tanto a oportunidades públicas como discretas."
+      }
+    }
+  },
+  "adventure": {
+    "eyebrow": "Tu Trayectoria Inmobiliaria",
+    "smallTitle": "Atrévete a Elevar",
+    "mainTitle": "Tu Visión",
+    "cta": "Inicia la Conversación"
+  },
+  "brand": {
+    "signature": {
+      "line1": "Más que propiedades —",
+      "line2": "una relación basada en la confianza, la discreción y el valor a largo plazo."
+    }
+  },
+  "founder": {
+    "eyebrow": "Visión de la fundadora",
+    "quote": "Mi visión del sector inmobiliario va más allá de las propiedades. Se trata de comprender a las personas, sus estilos de vida y crear un servicio tan único como cada cliente.",
+    "name": "Dounia El Moutii",
+    "title": "Fundadora y broker principal",
+    "imageAlt": "Retrato de la fundadora"
+  },
+  "about": {
+    "seo": {
+      "title": "DEM Properties | Sobre la Agencia – Asesoría Inmobiliaria en Marbella",
+      "description": "Descubre DEM Properties, una asesoría inmobiliaria boutique en Marbella. Discreción, acompañamiento personalizado y propiedades cuidadosamente seleccionadas.",
+      "keywords": "inmobiliaria Marbella, asesoría inmobiliaria boutique, propiedades Marbella, off-market Marbella, DEM Properties",
+      "ogTitle": "DEM Properties – Asesoría Inmobiliaria Boutique",
+      "ogDescription": "Un enfoque cuidado de la inmobiliaria en Marbella. Asesoramiento personalizado, discreción y oportunidades seleccionadas."
+    },
+    "hero": {
+      "title1": "Sobre",
+      "title2": "La Agencia",
+      "subtitle": "Una agencia inmobiliaria boutique en Marbella, dedicada a la discreción, la experiencia local y un enfoque profundamente personal.",
+      "ctaProperties": "Ver propiedades",
+      "ctaContact": "Contacto privado",
+      "signature": "Desde 2019 — Inmobiliaria boutique en Marbella"
+    }
+  },
+  "localExpertise": {
+    "eyebrow": "Presencia Local",
+    "title": "Profundamente arraigados en Marbella",
+    "text": "Desde la Milla de Oro hasta Nueva Andalucía y los enclaves residenciales más discretos, guiamos a nuestros clientes por las mejores direcciones de Marbella con precisión, conocimiento local y una visión a largo plazo del valor.",
+    "locations": [
+      "Milla de Oro",
+      "Nueva Andalucía",
+      "Sierra Blanca",
+      "La Zagaleta"
+    ]
+  },
+  "propertyPreview": {
+    "viewDetails": "Ver detalles",
+    "explore": "Explorar propiedad",
+    "priceLabel": "Precio",
+    "surface": "Superficie",
+    "beds": "Dormitorios",
+    "baths": "Baños",
+    "imageCounter": "{{current}} / {{total}}"
+  },
+  "ourApproach": {
+    "eyebrow": "Nuestra Filosofía",
+    "title": {
+      "line1": "Una forma reflexiva",
+      "line2": "de abordar el sector inmobiliario"
+    },
+    "items": [
+      {
+        "title": "Escuchar antes de actuar",
+        "text": "Cada proyecto comienza con la comprensión de tus expectativas, tus tiempos y el estilo de vida que deseas construir en torno a la propiedad."
+      },
+      {
+        "title": "Precisión antes que volumen",
+        "text": "Trabajamos con enfoque y selectividad, analizando cada oportunidad con claridad, criterio y una visión a largo plazo."
+      },
+      {
+        "title": "Acompañamiento medido",
+        "text": "Nuestro papel es asesorar, no apresurar. Guiamos las decisiones con criterio, conocimiento del mercado y distancia estratégica."
+      }
+    ]
+  },
+  "property": {
+    "ref": "Ref",
+    "operation": {
+      "sale": "En venta",
+      "rent": "En alquiler"
+    },
+    "specs": {
+      "beds": "Dorm.",
+      "baths": "Baños",
+      "size": "m²"
+    },
+    "price": {
+      "label": "Inversión",
+      "onRequest": "Precio bajo solicitud",
+      "perMonth": "/ mes"
+    },
+    "actions": {
+      "viewDetails": "Ver detalles",
+      "preview": "Vista rápida",
+      "like": "Guardar propiedad"
+    },
+    "imageFallback": "Imagen no disponible"
+  },
+  "contact": {
+    "hero": {
+      "title1": "Hablemos",
+      "title2": "Conectemos",
+      "subtitle": "Inicie una conversación confidencial con un equipo dedicado a una asesoría inmobiliaria personalizada en Marbella.",
+      "cta": "Descubrir más",
+      "signature": "DEM PROPERTIES — DISCRECIÓN Y EXPERIENCIA"
+    },
+    "intro": {
+      "eyebrow": "Consultas privadas",
+      "text": "¿Busca algo más que una propiedad?\nTrabajamos con clientes que valoran la discreción, la experiencia y un acompañamiento realmente personalizado."
+    },
+    "info": {
+      "name": "Dounia El Moutii",
+      "role": "Fundadora y broker principal",
+      "locationLabel": "Ubicación",
+      "location": "Marbella, Costa del Sol",
+      "phoneLabel": "Teléfono",
+      "emailLabel": "Email"
+    },
+    "form": {
+      "fields": {
+        "name": "Nombre",
+        "lastname": "Apellidos",
+        "email": "Email",
+        "phone": "Teléfono",
+        "message": "Mensaje"
+      },
+      "submit": "Enviar consulta",
+      "success": "Gracias por su consulta. Nos pondremos en contacto con usted en breve.",
+      "error": "Ha ocurrido un error. Por favor, inténtelo de nuevo."
+    }
+  }
+}

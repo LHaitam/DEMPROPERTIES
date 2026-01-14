@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "about": "About Us",
+    "contact": "Contact Us"
+  },
+  "home": {
+    "loading": "Curated real estate experience"
+  },
+  "hero": {
+    "brand": "Properties",
+    "subtitle": "Carefully selected properties in Marbella, guided by discretion, architecture and location.",
+    "ctaProperties": "Explore Properties",
+    "ctaContact": "Private Contact",
+    "signature": "Est. 2019 — Real Estate Advisory in Marbella"
+  },
+  "emotion": {
+    "eyebrow": "Founder's Vision",
+    "quote": "My vision of real estate goes beyond properties.\nIt is about creating services designed around each client’s lifestyle, expectations and ambitions.",
+    "role": "Founder & Principal Broker",
+    "imageAlt": "Founder of a real estate advisory in Marbella"
+  },
+  "featured": {
+    "eyebrow": "Selected Properties",
+    "title": "Featured Listings",
+    "subtitle": "A curated selection of properties currently available in Marbella and its surroundings.",
+    "cta": "View All Properties",
+    "loading": "Refining selection…"
+  },
+  "statement": {
+    "text": "Discreet real estate services, tailored to each client"
+  },
+  "whyUs": {
+    "eyebrow": "Why Choose Us",
+    "title": {
+      "line1": "A considered real estate",
+      "line2": "experience"
+    },
+    "subtitle": "Built around clarity, discretion and a precise understanding of our clients’ expectations.",
+    "items": {
+      "curated": {
+        "title": "Carefully Selected Properties",
+        "text": "Each property is chosen for its location, quality and long-term relevance. Quality always comes before quantity."
+      },
+      "tailored": {
+        "title": "Personalised Guidance",
+        "text": "A flexible advisory approach shaped around your goals, lifestyle and timeline."
+      },
+      "local": {
+        "title": "Local Knowledge",
+        "text": "Based in Marbella, we provide reliable insight and access to both public and discreet opportunities."
+      }
+    }
+  },
+  "adventure": {
+    "eyebrow": "Your Real Estate Journey",
+    "smallTitle": "Dare to Elevate",
+    "mainTitle": "Your Vision",
+    "cta": "Start the Conversation"
+  },
+  "brand": {
+    "signature": {
+      "line1": "More than properties —",
+      "line2": "a relationship built on trust, discretion and long-term value."
+    }
+  },
+  "founder": {
+    "eyebrow": "Founder’s Vision",
+    "quote": "My idea of real estate goes beyond properties. It is about understanding people, lifestyles, and creating a service as unique as each client.",
+    "name": "Dounia El Moutii",
+    "title": "Founder & Principal Broker",
+    "imageAlt": "Portrait of the founder"
+  },
+  "about": {
+    "seo": {
+      "title": "DEM Properties | About the Agency – Real Estate Advisory in Marbella",
+      "description": "Discover DEM Properties, a boutique real estate advisory based in Marbella. Discretion, tailored guidance and carefully selected properties.",
+      "keywords": "real estate Marbella, boutique real estate agency, property advisory Marbella, off-market properties, DEM Properties",
+      "ogTitle": "DEM Properties – Boutique Real Estate Advisory",
+      "ogDescription": "A considered approach to real estate in Marbella. Tailored advisory, discretion and curated opportunities."
+    },
+    "hero": {
+      "title1": "About",
+      "title2": "The Agency",
+      "subtitle": "A boutique real estate agency in Marbella, dedicated to discretion, expertise and a deeply personal approach to property.",
+      "ctaProperties": "View Properties",
+      "ctaContact": "Private Contact",
+      "signature": "Est. 2019 — Boutique Real Estate in Marbella"
+    }
+  },
+  "localExpertise": {
+    "eyebrow": "Local Presence",
+    "title": "Deeply rooted in Marbella",
+    "text": "From the Golden Mile to Nueva Andalucía and the most discreet residential enclaves, we guide our clients through Marbella’s finest addresses with precision, local insight and a long-term understanding of value.",
+    "locations": [
+      "Golden Mile",
+      "Nueva Andalucía",
+      "Sierra Blanca",
+      "La Zagaleta"
+    ]
+  },
+  "ourApproach": {
+    "eyebrow": "Our Philosophy",
+    "title": {
+      "line1": "A thoughtful way",
+      "line2": "to navigate real estate"
+    },
+    "items": [
+      {
+        "title": "Listening Before Acting",
+        "text": "Every project begins with understanding — your expectations, your timing and the life you intend to build around the property."
+      },
+      {
+        "title": "Precision Over Volume",
+        "text": "We operate with focus and selectivity, analysing each opportunity with clarity, restraint and long-term perspective."
+      },
+      {
+        "title": "Measured Guidance",
+        "text": "Our role is to advise, not to rush. We guide decisions with calm judgement, market insight and strategic distance."
+      }
+    ]
+  },
+  "property": {
+    "ref": "Ref",
+    "operation": {
+      "sale": "For Sale",
+      "rent": "To Rent"
+    },
+    "specs": {
+      "beds": "Beds",
+      "baths": "Baths",
+      "size": "m²"
+    },
+    "price": {
+      "label": "Investment",
+      "onRequest": "Price on request",
+      "perMonth": "/ mo."
+    },
+    "actions": {
+      "viewDetails": "View details",
+      "preview": "Quick view",
+      "like": "Save property"
+    },
+    "imageFallback": "Property image unavailable"
+  },
+  "propertyPreview": {
+    "viewDetails": "View details",
+    "explore": "Explore experience",
+    "priceLabel": "Price",
+    "surface": "Surface",
+    "beds": "Beds",
+    "baths": "Baths",
+    "imageCounter": "{{current}} / {{total}}"
+  },
+  "contact": {
+    "hero": {
+      "title1": "Let’s",
+      "title2": "Connect",
+      "subtitle": "Begin a confidential conversation with a team dedicated to refined, bespoke real estate in Marbella.",
+      "cta": "Discover More",
+      "signature": "DEM PROPERTIES — DISCRETION & EXPERTISE"
+    },
+    "intro": {
+      "eyebrow": "Private Enquiries",
+      "text": "Looking for more than just a property?\nWe work with clients who value discretion, expertise and a truly personalised real estate experience."
+    },
+    "info": {
+      "name": "Dounia El Moutii",
+      "role": "Founder & Principal Broker",
+      "locationLabel": "Location",
+      "location": "Marbella, Costa del Sol",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email"
+    },
+    "form": {
+      "fields": {
+        "name": "Full name",
+        "lastname": "Last name",
+        "email": "Email",
+        "phone": "Phone",
+        "message": "Message"
+      },
+      "submit": "Send enquiry",
+      "success": "Thank you for your enquiry. We will contact you shortly.",
+      "error": "An error occurred. Please try again."
+    }
+  }
+}

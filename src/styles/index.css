@@ -1,0 +1,44 @@
+/* ===============================
+   TAILWIND CORE
+================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===============================
+   GLOBAL BASE STYLES
+================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-charcoal antialiased font-oswald;
+  }
+}
+
+/* ===============================
+   REUSABLE UI CLASSES
+================================ */
+@layer components {
+  .filter-input {
+    @apply w-full border border-charcoal/20 bg-transparent px-4 py-3
+    font-oswald uppercase tracking-wider text-sm
+    focus:outline-none focus:border-gold;
+  }
+
+  .filter-primary {
+    @apply bg-charcoal text-cream px-6 py-3
+    font-oswald uppercase tracking-widest
+    hover:bg-gold hover:text-charcoal
+    transition-colors;
+  }
+
+  .filter-ghost {
+    @apply border border-charcoal px-6 py-3
+    font-oswald uppercase tracking-widest
+    hover:bg-charcoal hover:text-cream
+    transition-colors;
+  }
+}
