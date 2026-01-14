@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { PropertyFilters, type PropertyFiltersValues } from "../properties/PropertiesFilters";
+import { PropertyFilters } from "@/components/properties/PropertiesFilters";
 import { PropertiesGrid } from "../properties/PropertiesGrid";
 
 import type { Property } from "@/types/property";
