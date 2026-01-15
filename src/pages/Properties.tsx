@@ -1,238 +1,188 @@
-import { useRef, useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { HeroProperties } from "@/components/properties/PropertiesHero";
-import {
-  PropertyFilters,
-  type PropertyFiltersValues,
-} from "@/components/properties/PropertiesFilters";
 import { PropertiesGrid } from "@/components/properties/PropertiesGrid";
-import PropertyPreview from "@/components/property/PropertyPreview";
+import { PropertyFilters } from "@/components/properties/PropertiesFilters";
+import type { FilterState } from "@/components/properties/PropertiesFilters";
 
-import type { Property } from "@/types/property";
-import { fetchAllProperties } from "@/services/inmovillaApi";
-import { mapInmovillaToProperty } from "@/lib/property-mapper";
+import { PropertyPreview } from "@/components/property/PropertyPreview";
+import { useProperties } from "@/hooks/useProperties";
+import type { Property } from "@/hooks/useProperties";
 
-export default function PropertiesPage() {
-  const filtersRef = useRef<HTMLDivElement>(null);
+const ITEMS_PER_PAGE = 9;
 
-  const [page, setPage] = useState(1);
-  const [selected, setSelected] = useState<Property | null>(null);
-  const [filters, setFilters] = useState<PropertyFiltersValues>({});
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
+const Properties: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const { properties, loading } = useProperties(i18n.language);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 12;
+  const gridRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
 
-  /* ===================== LOAD DATA ===================== */
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    operation: "all",
+    type: "all",
+    minPrice: 0,
+    maxPrice: 50000000,
+    beds: "all",
+    baths: "all",
+    ref: "",
+    minSurface: "",
+    maxSurface: "",
+    pool: false,
+    parking: false,
+    terrace: false,
+    seaViews: false,
+  });
+
   useEffect(() => {
-    const loadProperties = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchAllProperties();
+    setCurrentPage(1);
+  }, [filters]);
 
-        // Inmovilla: paginacion[0] = meta
-        const items = data?.paginacion?.slice(1) ?? [];
+  const propertyTypes = useMemo(() => {
+    return Array.from(new Set(properties.map(p => (p as any).tipoinmo).filter(Boolean))) as string[];
+  }, [properties]);
 
-        const mapped: Property[] = items.map((raw: any) =>
-          mapInmovillaToProperty(raw)
-        );
-
-        setProperties(mapped);
-      } catch (error) {
-        console.error("Error loading properties:", error);
-        setProperties([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProperties();
-  }, []);
-
-  /* ===================== FILTERING ===================== */
   const filteredProperties = useMemo(() => {
-    return properties.filter((p) => {
-      // OPERATION
-      if (filters.operation && p.operation !== filters.operation) {
-        return false;
-      }
+    return properties.filter(p => {
+      const prop = p as any;
+      const matchSearch = !filters.search || (`${prop.poblacion} ${prop.ciudad} ${prop.ref}`).toLowerCase().includes(filters.search.toLowerCase());
+      const matchOp = filters.operation === "all" || prop.keyacci?.toString() === filters.operation;
+      const matchType = filters.type === "all" || prop.tipoinmo === filters.type;
+      const matchBeds = filters.beds === "all" || Number(prop.dormitorios) >= Number(filters.beds);
+      const matchRef = !filters.ref || prop.ref?.toLowerCase().includes(filters.ref.toLowerCase());
+      const matchMinSurf = !filters.minSurface || Number(prop.supconst) >= Number(filters.minSurface);
+      const matchMaxSurf = !filters.maxSurface || Number(prop.supconst) <= Number(filters.maxSurface);
+      const matchPool = !filters.pool || prop.piscina === "S";
+      const matchParking = !filters.parking || prop.parking === "S";
+      const matchSea = !filters.seaViews || prop.vistasmar === "S";
 
-      // PRICE
-      const minPrice = filters.minPrice
-        ? Number(filters.minPrice)
-        : null;
-      const maxPrice = filters.maxPrice
-        ? Number(filters.maxPrice)
-        : null;
+      const price = Number(prop.keyacci) === 2 ? Number(prop.precioalq) : Number(prop.precioinmo);
+      const matchPrice = isNaN(price) || price <= filters.maxPrice;
 
-      if (minPrice !== null && p.price < minPrice) return false;
-      if (maxPrice !== null && p.price > maxPrice) return false;
-
-      // LOCATION
-      if (
-        filters.location &&
-        !p.location.toLowerCase().includes(filters.location.toLowerCase())
-      ) {
-        return false;
-      }
-
-      return true;
+      return matchSearch && matchOp && matchType && matchBeds && matchRef && matchMinSurf && matchMaxSurf && matchPool && matchParking && matchSea && matchPrice;
     });
   }, [properties, filters]);
 
-  /* ===================== PAGINATION ===================== */
-  const pagination = useMemo(() => {
-    const total = filteredProperties.length;
-    return {
-      total,
-      pages: Math.ceil(total / itemsPerPage),
-    };
-  }, [filteredProperties]);
+  const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
+  const paginatedProperties = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProperties.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredProperties, currentPage]);
 
-  const displayProperties = useMemo(() => {
-    const start = (page - 1) * itemsPerPage;
-    return filteredProperties.slice(start, start + itemsPerPage);
-  }, [filteredProperties, page]);
-
-  /* ===================== HANDLERS ===================== */
-  const handleSearch = (newFilters: PropertyFiltersValues) => {
-    setFilters(newFilters);
-    setPage(1);
-
-    setTimeout(() => {
-      filtersRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 100);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  /* ===================== VIEW ===================== */
-  return (
-    <div className="bg-[#FDFCFB] min-h-screen">
-      <HeroProperties
-        onExploreClick={() =>
-          filtersRef.current?.scrollIntoView({ behavior: "smooth" })
-        }
-      />
+  const scrollToGrid = () => gridRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToFilters = () => filterRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-      <div
-        ref={filtersRef}
-        className="scroll-mt-[80px] md:scroll-mt-[100px]"
-      >
-        <PropertyFilters onSearch={handleSearch} />
+  return (
+    <div className="min-h-screen bg-white">
+      <HeroProperties onExploreClick={scrollToGrid} onFiltersClick={scrollToFilters} />
+
+      <div ref={filterRef} className="scroll-mt-20">
+        <PropertyFilters filters={filters} setFilters={setFilters} propertyTypes={propertyTypes} />
       </div>
 
-      <section className="max-w-[1500px] mx-auto px-6 py-20 min-h-[600px]">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-40 space-y-6">
-            <div className="w-10 h-10 border border-[#C5A059]/30 border-t-[#C5A059] rounded-full animate-spin" />
-            <p className="font-oswald tracking-[0.4em] text-[9px] uppercase text-[#121212]/40 text-center">
-              Curating the finest selection...
-            </p>
-          </div>
-        ) : (
-          <>
-            {displayProperties.length > 0 ? (
-              <PropertiesGrid
-                properties={displayProperties}
-                onPreview={setSelected}
-              />
-            ) : (
-              <div className="text-center py-40 border border-[#121212]/5 bg-white/40 backdrop-blur-sm">
-                <p className="font-playfair italic text-2xl text-[#121212]/40 mb-8">
-                  No properties found for your criteria.
-                </p>
-                <button
-                  onClick={() => handleSearch({})}
-                  className="font-oswald text-[10px] tracking-widest text-[#C5A059] uppercase border-b border-[#C5A059]/20 hover:border-[#C5A059] transition-all pb-1"
-                >
-                  Clear all filters
-                </button>
+      <section ref={gridRef} className="py-20 px-6 md:px-12 scroll-mt-24">
+        <div className="max-w-7xl mx-auto">
+          {loading ? (
+            <div className="text-center py-20 font-playfair italic text-stone-500">{t('featured.loading')}</div>
+          ) : (
+            <>
+              <div className="mb-12 flex justify-between items-center border-b border-stone-100 pb-6">
+                <span className="font-oswald text-[10px] uppercase tracking-[0.3em] text-stone-400">
+                  {filteredProperties.length} {t('nav.properties')}
+                  {totalPages > 1 && ` — Page ${currentPage} / ${totalPages}`}
+                </span>
               </div>
-            )}
 
-            {/* ===== PAGINATION ===== */}
-            {pagination.pages > 1 && displayProperties.length > 0 && (
-              <div className="mt-32 border-t border-[#121212]/5 pt-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                <p className="font-oswald text-[9px] tracking-[0.3em] text-[#121212]/30 uppercase">
-                  Listing {String(page).padStart(2, "0")} of{" "}
-                  {String(pagination.pages).padStart(2, "0")}
-                </p>
+              {/* Animation de la grille au changement de page */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPage}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <PropertiesGrid properties={paginatedProperties} onPreview={(p) => { setSelectedProperty(p); setIsPreviewOpen(true); }} />
+                </motion.div>
+              </AnimatePresence>
 
-                <div className="flex items-center gap-4 md:gap-10">
-                  <button
-                    disabled={page === 1}
-                    onClick={() => {
-                      setPage((p) => p - 1);
-                      filtersRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    }}
-                    className="group flex items-center gap-3 font-oswald text-[10px] tracking-[0.4em] uppercase disabled:opacity-10"
+              {/* CONTRÔLES DE PAGINATION ANIMÉS */}
+              {totalPages > 1 && (
+                <div className="mt-20 flex justify-center items-center gap-6">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="p-3 border border-stone-200 rounded-full disabled:opacity-20 hover:border-stone-900 transition-colors"
                   >
-                    <span className="w-6 h-[1px] bg-[#121212] group-hover:w-12 group-hover:bg-[#C5A059] transition-all" />
-                    Prev
-                  </button>
+                    <ChevronLeft size={20} />
+                  </motion.button>
 
-                  <div className="flex items-center gap-1">
-                    {Array.from(
-                      { length: pagination.pages },
-                      (_, i) => i + 1
-                    ).map((i) => (
-                      <button
-                        key={i}
-                        onClick={() => {
-                          setPage(i);
-                          filtersRef.current?.scrollIntoView({
-                            behavior: "smooth",
-                          });
-                        }}
-                        className={`w-12 h-12 flex items-center justify-center font-oswald text-[11px] transition-all ${
-                          page === i
-                            ? "text-[#121212]"
-                            : "text-[#121212]/20 hover:text-[#C5A059]"
-                        }`}
-                      >
-                        {String(i).padStart(2, "0")}
-                        {page === i && (
-                          <motion.div
-                            layoutId="pageBar"
-                            className="absolute bottom-2 w-4 h-[1px] bg-[#C5A059]"
-                          />
-                        )}
-                      </button>
-                    ))}
+                  <div className="flex gap-3">
+                    {[...Array(totalPages)].map((_, i) => {
+                      const pageNum = i + 1;
+                      return (
+                        <motion.button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          whileHover={{ y: -2 }}
+                          className={`relative w-12 h-12 font-oswald text-xs tracking-widest overflow-hidden transition-colors ${currentPage === pageNum ? "text-white" : "text-stone-400 hover:text-stone-900"
+                            }`}
+                        >
+                          <span className="relative z-10">{pageNum}</span>
+                          {currentPage === pageNum && (
+                            <motion.div
+                              layoutId="activePageBg"
+                              className="absolute inset-0 bg-stone-900"
+                              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                            />
+                          )}
+                        </motion.button>
+                      );
+                    })}
                   </div>
 
-                  <button
-                    disabled={page === pagination.pages}
-                    onClick={() => {
-                      setPage((p) => p + 1);
-                      filtersRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    }}
-                    className="group flex items-center gap-3 font-oswald text-[10px] tracking-[0.4em] uppercase disabled:opacity-10"
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="p-3 border border-stone-200 rounded-full disabled:opacity-20 hover:border-stone-900 transition-colors"
                   >
-                    Next
-                    <span className="w-6 h-[1px] bg-[#121212] group-hover:w-12 group-hover:bg-[#C5A059] transition-all" />
-                  </button>
+                    <ChevronRight size={20} />
+                  </motion.button>
                 </div>
-
-                <div className="hidden lg:block w-32" />
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
+        </div>
       </section>
 
-      <PropertyPreview
-        property={selected}
-        isOpen={!!selected}
-        onClose={() => setSelected(null)}
-      />
+      <AnimatePresence>
+        {isPreviewOpen && selectedProperty && (
+          <PropertyPreview
+            property={selectedProperty}
+            isOpen={isPreviewOpen}
+            onClose={() => setIsPreviewOpen(false)}
+            lang={i18n.language} // <--- AJOUTEZ CETTE LIGNE
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
-}
+};
+
+export default Properties;

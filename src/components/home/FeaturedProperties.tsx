@@ -1,134 +1,35 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { motion, type Variants } from "framer-motion";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
-import type { Property } from "@/types/property";
-import { fetchAllProperties } from "@/services/inmovillaApi";
-import { mapInmovillaToProperty } from "@/lib/property-mapper";
-
+// Components
 import PropertyCard from "@/components/property/PropertyCard";
-import PropertyPreview from "@/components/property/PropertyPreview";
+import { PropertyPreview } from "@/components/property/PropertyPreview";
 
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-const containerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.18,
-    },
-  },
-};
+// Hooks & Types
+import { useProperties } from "@/hooks/useProperties";
+import type { Property } from "@/hooks/useProperties";
 
-const itemVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 48,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.9,
-      ease: [0.22, 1, 0.36, 1],
-    },
-  },
-};
-
-export default function FeaturedProperties() {
+const FeaturedProperties: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { properties, loading } = useProperties(i18n.language);
+  
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [selected, setSelected] = useState<Property | null>(null);
-  const [loading, setLoading] = useState(true);
+  const lastThreeProperties = properties.slice(0, 3);
 
-  /* =========================================================
-     FETCH DATA
-  ========================================================= */
-  useEffect(() => {
-    let mounted = true;
+  const handlePreview = (property: Property) => {
+    setSelectedProperty(property);
+    setIsPreviewOpen(true);
+  };
 
-    const fetchFeatured = async () => {
-      setLoading(true);
-
-      try {
-        const data = await fetchAllProperties();
-
-        // Sécurité : API doit renvoyer un objet JSON
-        if (!data || typeof data !== "object") {
-          throw new Error("Invalid API response");
-        }
-
-        // Inmovilla : paginacion[0] = meta
-        const items = Array.isArray(data.paginacion)
-          ? data.paginacion.slice(1)
-          : [];
-
-        // Langue Inmovilla
-        const lang =
-          i18n.language === "es" ? 2 :
-          i18n.language === "en" ? 3 :
-          2; // fallback ES
-
-        const mapped: Property[] = items
-          .map((raw: any) =>
-            mapInmovillaToProperty(
-              raw,
-              data.descripciones ?? {},
-              lang
-            )
-          )
-          .filter(Boolean)
-          .slice(0, 3);
-
-        if (mounted) {
-          setProperties(mapped);
-        }
-      } catch (error) {
-        console.error("FeaturedProperties error:", error);
-        if (mounted) {
-          setProperties([]);
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchFeatured();
-
-    return () => {
-      mounted = false;
-    };
-  }, [i18n.language]);
-
-  /* =========================================================
-     LOADING
-  ========================================================= */
-  if (loading) {
-    return (
-      <section className="py-40 flex flex-col items-center justify-center bg-cream">
-        <div className="w-8 h-8 border border-gold/20 border-t-gold rounded-full animate-spin mb-4" />
-        <p className="font-playfair italic text-charcoal/40">
-          {t("featured.loading")}
-        </p>
-      </section>
-    );
-  }
-
-  if (!properties.length) return null;
-
-  /* =========================================================
-     RENDER
-  ========================================================= */
   return (
     <section className="relative py-36 sm:py-44 px-4 sm:px-6 overflow-hidden bg-cream">
       <div className="max-w-7xl mx-auto">
-
-        {/* HEADER */}
+        
+        {/* HEADER SECTION - STYLE CENTRÉ LUXE */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -136,38 +37,51 @@ export default function FeaturedProperties() {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <span className="block font-oswald uppercase tracking-[0.45em] text-gold text-xs mb-6">
-            {t("featured.eyebrow")}
+          <span className="block font-oswald uppercase tracking-[0.45em] text-[#C5A059] text-[10px] mb-6">
+            {t("featured.eyebrow", "Sélection Exclusive")}
           </span>
 
-          <h2 className="font-oswald uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl text-charcoal leading-[1.05]">
-            {t("featured.title")}
+          <h2 className="font-oswald uppercase tracking-tight text-4xl sm:text-5xl md:text-6xl text-stone-900 leading-[1.05]">
+            {t("featured.title", "Dernières Opportunités")}
           </h2>
 
-          <p className="mt-10 font-playfair italic text-base sm:text-lg text-charcoal/70">
-            {t("featured.subtitle")}
+          <p className="mt-10 font-playfair italic text-base sm:text-lg text-stone-500/70">
+            {t("featured.subtitle", "Une collection de propriétés d'exception sélectionnées pour leur caractère unique.")}
           </p>
         </motion.div>
 
-        {/* GRID */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-12"
-        >
-          {properties.map((property) => (
-            <motion.div key={property.id} variants={itemVariants}>
-              <PropertyCard
-                property={property}
-                onPreview={() => setSelected(property)}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* GRID SECTION */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="aspect-[3/4] bg-stone-50 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-12"
+          >
+            {lastThreeProperties.map((property, index) => (
+              <motion.div
+                key={property.cod_ofer}
+                initial={{ opacity: 0, y: 48 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: index * 0.18, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true }}
+              >
+                <PropertyCard 
+                  property={property} 
+                  onPreview={handlePreview} 
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
-        {/* CTA */}
+        {/* BOTTOM CTA - STYLE "MODERN LEGACY" */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -179,23 +93,30 @@ export default function FeaturedProperties() {
             to="/properties"
             className="
               inline-block px-14 py-5
-              border border-charcoal/15
-              text-charcoal font-oswald text-[10px] tracking-[0.3em] uppercase
-              hover:bg-charcoal hover:text-cream hover:border-charcoal
+              border border-stone-900/15
+              text-stone-900 font-oswald text-[10px] tracking-[0.3em] uppercase
+              hover:bg-stone-900 hover:text-white hover:border-stone-900
               transition-all duration-700
             "
           >
-            {t("featured.cta")}
+            {t("featured.cta", "Voir tout le catalogue")}
           </Link>
         </motion.div>
       </div>
 
-      {/* QUICK VIEW */}
-      <PropertyPreview
-        property={selected}
-        isOpen={!!selected}
-        onClose={() => setSelected(null)}
-      />
+      {/* MODAL PREVIEW */}
+      <AnimatePresence>
+        {isPreviewOpen && selectedProperty && (
+          <PropertyPreview 
+            property={selectedProperty} 
+            isOpen={isPreviewOpen} 
+            onClose={() => setIsPreviewOpen(false)}
+            lang={i18n.language}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
-}
+};
+
+export default FeaturedProperties;

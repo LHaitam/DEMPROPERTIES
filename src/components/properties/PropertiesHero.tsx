@@ -1,17 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { ArrowRight, SlidersHorizontal } from "lucide-react";
 
 type HeroPropertiesProps = {
   onExploreClick?: () => void;
+  onFiltersClick?: () => void;
 };
 
 export const HeroProperties: React.FC<HeroPropertiesProps> = ({
   onExploreClick,
+  onFiltersClick,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <section
-      aria-label="Luxury properties hero"
+      aria-label="Properties hero"
       className="relative min-h-screen w-full overflow-hidden flex flex-col justify-center px-4 pt-24 pb-12"
     >
       {/* ================= BACKGROUND SHAPES ================= */}
@@ -23,7 +28,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
           className="
             absolute top-[-10%] right-[-10%]
             w-[60vw] h-[75vh]
-            bg-sand/25
+            bg-stone-200/30
             rounded-bl-[12rem]
             blur-2xl md:blur-3xl
           "
@@ -40,14 +45,14 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
           className="
             absolute bottom-[-10%] left-[-10%]
             w-[65vw] h-[60vh]
-            bg-terracotta/25
+            bg-[#C5A059]/10
             rounded-tr-[14rem]
             blur-2xl md:blur-3xl
           "
         />
       </div>
 
-      {/* ================= TEXTURE ================= */}
+      {/* ================= TEXTURE TADELAKT ================= */}
       <div
         className="
           absolute inset-0 z-[1]
@@ -94,18 +99,18 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* TITLES */}
-          <div className="lg:col-span-12 relative mb-14 lg:mb-28">
+          <div className="lg:col-span-12 relative mb-14 lg:mb-28 text-center lg:text-left">
             <motion.h1
               initial={{ opacity: 0, y: 80 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="
                 font-oswald font-bold uppercase tracking-tighter
-                leading-[0.85] text-charcoal
+                leading-[0.85] text-stone-900
                 text-[clamp(72px,11vw,180px)]
               "
             >
-              Luxury
+              {t('hero.brand')}
             </motion.h1>
 
             <motion.h1
@@ -122,15 +127,14 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
                 leading-[0.85]
                 text-[clamp(72px,11vw,180px)]
                 bg-gradient-to-r from-[#8A6930] via-[#CFA670] to-[#6F5327]
-                text-center lg:text-left
-                ml-0 lg:ml-[20vw]
+                lg:ml-[20vw]
               "
             >
-              Properties
+              Collection
             </motion.h1>
           </div>
 
-          {/* SUBTITLE & CTA */}
+          {/* SUBTITLE & CTA DYNAMIQUES */}
           <div className="lg:col-start-8 lg:col-span-5 flex flex-col gap-10">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -142,12 +146,11 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
               }}
               className="
                 font-playfair text-xl md:text-2xl
-                text-charcoal/80 leading-relaxed italic
-                border-l-2 border-gold pl-6
+                text-stone-800/80 leading-relaxed italic
+                border-l-2 border-[#C5A059] pl-6
               "
             >
-              Curated listings in Marbella — from the Golden Mile to Nueva
-              Andalucía — selected for architecture, address and long-term value.
+              {t('hero.subtitle')}
             </motion.p>
 
             <motion.div
@@ -160,17 +163,18 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
               }}
               className="flex flex-col sm:flex-row gap-4"
             >
+              {/* BOUTON EXPLORE */}
               <button
                 onClick={onExploreClick}
                 className="
                   group relative px-8 py-4
-                  bg-charcoal text-cream
+                  bg-stone-900 text-stone-50
                   font-oswald uppercase tracking-widest
                   overflow-hidden
                 "
               >
                 <span className="relative z-10 flex items-center justify-center gap-3 group-hover:gap-5 transition-all">
-                  Explore listings <ArrowRight className="w-4 h-4" />
+                  {t('hero.ctaProperties')} <ArrowRight className="w-4 h-4" />
                 </span>
 
                 <span
@@ -187,16 +191,18 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
                 />
               </button>
 
+              {/* BOUTON FILTERS */}
               <button
-                onClick={onExploreClick}
+                onClick={onFiltersClick}
                 className="
                   px-8 py-4
-                  border border-charcoal
-                  text-charcoal
+                  border border-stone-900
+                  text-stone-900
                   font-oswald uppercase tracking-widest
-                  hover:bg-charcoal hover:text-cream
-                  transition-colors duration-300
+                  hover:bg-stone-900 hover:text-stone-50
+                  transition-all duration-300
                   flex items-center justify-center gap-2
+                  active:scale-95
                 "
               >
                 <SlidersHorizontal className="w-4 h-4" />
@@ -207,15 +213,15 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
         </div>
       </div>
 
-      {/* ================= SIGNATURE ================= */}
+      {/* ================= SIGNATURE DYNAMIQUE ================= */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
         className="absolute bottom-10 left-10 hidden md:block"
       >
-        <span className="font-oswald text-xs uppercase tracking-[0.35em] writing-vertical-rl rotate-180 text-charcoal/40">
-          Fine Real Estate — Marbella
+        <span className="font-oswald text-xs uppercase tracking-[0.35em] [writing-mode:vertical-rl] rotate-180 text-stone-900/40">
+          {t('hero.signature')}
         </span>
       </motion.div>
     </section>

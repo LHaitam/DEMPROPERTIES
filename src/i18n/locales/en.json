@@ -123,6 +123,7 @@
   },
   "property": {
     "ref": "Ref",
+    "amenitiesTitle": "Extras & Amenities",
     "operation": {
       "sale": "For Sale",
       "rent": "To Rent"
@@ -130,8 +131,38 @@
     "specs": {
       "beds": "Beds",
       "baths": "Baths",
-      "size": "m²"
+      "size": "m²",
+      "years": "years"
     },
+    "amenities": {
+      "airCond": "Central Air Cond.",
+      "garage": "Garage Included",
+      "terrace": "Terrace",
+      "elevator": "Elevator",
+      "wardrobes": "Wardrobes",
+      "storage": "Storage Room",
+      "armoredDoor": "Armored Door",
+      "furniture": "Furniture",
+      "videoIntercom": "Video Intercom",
+      "pool": "Community Pool",
+      "light": "Light",
+      "water": "Water",
+      "parking": "Parking Included",
+      "barbecue": "Barbecue",
+      "tv": "TV",
+      "gamesRoom": "Games Room",
+      "garden": "Garden",
+      "adaptedPmr": "Adapted PMR",
+      "heatPump": "Cold Heat Pump",
+      "clearViews": "Clear Views",
+      "greenArea": "Green Area",
+      "surveillance": "24H Surveillance",
+      "trees": "Trees",
+      "shopping": "Shopping Centers",
+      "coastal": "Coastal Area",
+      "golf": "Golf"
+    },
+    "energy_desc": "Efficiency and energy consumption",
     "price": {
       "label": "Investment",
       "onRequest": "Price on request",
@@ -142,7 +173,10 @@
       "preview": "Quick view",
       "like": "Save property"
     },
-    "imageFallback": "Property image unavailable"
+    "imageFallback": "Property image unavailable",
+    "preview": {
+      "fallback_desc": "Explore this exclusive property selected by our agency."
+    }
   },
   "propertyPreview": {
     "viewDetails": "View details",
@@ -152,6 +186,48 @@
     "beds": "Beds",
     "baths": "Baths",
     "imageCounter": "{{current}} / {{total}}"
+  },
+  "propertyDetail": {
+    "reference": "Reference",
+    "operation": "Operation Type",
+    "type": "Property Type",
+    "zone": "Zone / City",
+    "builtSurface": "Built Surface",
+    "conservation": "Conservation",
+    "antiquity": "Age",
+    "exteriorType": "Exterior Type",
+    "ibi": "I.B.I. (Property Tax)",
+    "regime": "Regime",
+    "energyCert": "Energy Certification",
+    "situation": "Situation",
+    "features": "Features and Qualities",
+    "contact": "Contact Us",
+    "contactTitle": "Inquire about this property",
+    "send": "Send Inquiry",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message"
+    }
+  },
+  "filters": {
+    "advanced": "Advanced Filters",
+    "simple": "Simple Filters",
+    "reference": "Reference",
+    "surface": "Surface area",
+    "min_surface": "Min Surface (m²)",
+    "max_surface": "Max Surface (m²)",
+    "search_placeholder": "Search location...",
+    "features": {
+      "pool": "Pool",
+      "parking": "Parking",
+      "lift": "Lift",
+      "terrace": "Terrace",
+      "furnished": "Furnished",
+      "urbanization": "Urbanization",
+      "new_build": "New Build",
+      "sea_views": "Sea Views"
+    }
   },
   "contact": {
     "hero": {

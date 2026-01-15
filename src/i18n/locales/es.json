@@ -100,15 +100,6 @@
       "La Zagaleta"
     ]
   },
-  "propertyPreview": {
-    "viewDetails": "Ver detalles",
-    "explore": "Explorar propiedad",
-    "priceLabel": "Precio",
-    "surface": "Superficie",
-    "beds": "Dormitorios",
-    "baths": "Baños",
-    "imageCounter": "{{current}} / {{total}}"
-  },
   "ourApproach": {
     "eyebrow": "Nuestra Filosofía",
     "title": {
@@ -132,6 +123,7 @@
   },
   "property": {
     "ref": "Ref",
+    "amenitiesTitle": "Extras y Equipamiento",
     "operation": {
       "sale": "En venta",
       "rent": "En alquiler"
@@ -139,8 +131,38 @@
     "specs": {
       "beds": "Dorm.",
       "baths": "Baños",
-      "size": "m²"
+      "size": "m²",
+      "years": "años"
     },
+    "amenities": {
+      "airCond": "Aire Acond. Central",
+      "garage": "Garaje Incluido",
+      "terrace": "Terraza",
+      "elevator": "Ascensor",
+      "wardrobes": "Armarios",
+      "storage": "Trastero",
+      "armoredDoor": "Puerta Blindada",
+      "furniture": "Muebles",
+      "videoIntercom": "Videoportero",
+      "pool": "Piscina Comunitaria",
+      "light": "Luz",
+      "water": "Agua",
+      "parking": "Parking Incluido",
+      "barbecue": "Barbacoa",
+      "tv": "TV",
+      "gamesRoom": "Sala de Juegos",
+      "garden": "Jardín",
+      "adaptedPmr": "Adaptado PMR",
+      "heatPump": "Bomba Frio/Calor",
+      "clearViews": "Vistas Despejadas",
+      "greenArea": "Zona Verde",
+      "surveillance": "Vigilancia 24H",
+      "trees": "Árboles",
+      "shopping": "Centros Comerciales",
+      "coastal": "Zona Costera",
+      "golf": "Golf"
+    },
+    "energy_desc": "Eficiencia y consumo de la vivienda",
     "price": {
       "label": "Inversión",
       "onRequest": "Precio bajo solicitud",
@@ -151,13 +173,67 @@
       "preview": "Vista rápida",
       "like": "Guardar propiedad"
     },
-    "imageFallback": "Imagen no disponible"
+    "imageFallback": "Imagen no disponible",
+    "preview": {
+      "fallback_desc": "Explore esta propiedad exclusiva seleccionada por nuestra agencia."
+    }
+  },
+  "propertyPreview": {
+    "viewDetails": "Ver detalles",
+    "explore": "Explorar propiedad",
+    "priceLabel": "Precio",
+    "surface": "Superficie",
+    "beds": "Dormitorios",
+    "baths": "Baños",
+    "imageCounter": "{{current}} / {{total}}"
+  },
+  "propertyDetail": {
+    "reference": "Referencia",
+    "operation": "Tipo Operación",
+    "type": "Tipo de Propiedad",
+    "zone": "Zona / Ciudad",
+    "builtSurface": "Superficie Construida",
+    "conservation": "Conservación",
+    "antiquity": "Antigüedad",
+    "exteriorType": "Tipo Exterior",
+    "ibi": "I.B.I.",
+    "regime": "Regimen",
+    "energyCert": "Certificación Energética",
+    "situation": "Situación",
+    "features": "Características y calidades",
+    "contact": "Contactar",
+    "contactTitle": "Consultar sobre esta propiedad",
+    "send": "Enviar consulta",
+    "form": {
+      "name": "Nombre",
+      "email": "Email",
+      "message": "Mensaje"
+    }
+  },
+  "filters": {
+    "advanced": "Filtros Avanzados",
+    "simple": "Filtros Simples",
+    "reference": "Referencia",
+    "surface": "Superficie",
+    "min_surface": "Superficie mín (m²)",
+    "max_surface": "Superficie máx (m²)",
+    "search_placeholder": "Escribe donde buscas...",
+    "features": {
+      "pool": "Piscina",
+      "parking": "Parking",
+      "lift": "Ascensor",
+      "terrace": "Terraza",
+      "furnished": "Amueblado",
+      "urbanization": "Urbanización",
+      "new_build": "Obra Nueva",
+      "sea_views": "Vistas al mar"
+    }
   },
   "contact": {
     "hero": {
       "title1": "Hablemos",
       "title2": "Conectemos",
-      "subtitle": "Inicie una conversación confidencial con un equipo dedicado a una asesoría inmobiliaria personalizada en Marbella.",
+      "subtitle": "Inicie una conversation confidencial con un equipo dedicado a una asesoría inmobiliaria personalizada en Marbella.",
       "cta": "Descubrir más",
       "signature": "DEM PROPERTIES — DISCRECIÓN Y EXPERIENCIA"
     },

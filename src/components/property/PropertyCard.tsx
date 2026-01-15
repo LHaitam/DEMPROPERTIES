@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
   ChevronRight,
@@ -10,213 +9,193 @@ import {
   Bath,
   Ruler,
   ArrowRight,
+  PhoneCall,
 } from "lucide-react";
-import type { Property } from "@/types/property";
+import { useNavigate } from "react-router-dom";
+import type { Property } from "@/hooks/useProperties";
 
-type Props = {
+const globalCache: Record<string, { images: string[]; detailedTitle: string }> = {};
+
+interface PropertyCardProps {
   property: Property;
-  onPreview: () => void;
-};
+  onPreview: (property: Property) => void;
+}
 
-const PropertyCard: React.FC<Props> = ({ property, onPreview }) => {
-  const { t } = useTranslation();
+const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [index, setIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  
+  const [extraData, setExtraData] = useState({
+    images: property.foto ? [property.foto] : [],
+    detailedTitle: property.poblacion || "Propiedad",
+    loading: true
+  });
 
-  /* =======================
-     ⛔ SKIP NON DISPONIBLE
-  ======================= */
-  if (property.status === "unavailable") return null;
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const langId = i18n.language === 'es' ? '1' : '2';
+      const cacheKey = `${property.cod_ofer}_${langId}`;
 
-  const images =
-    property.images?.length > 0
-      ? property.images
-      : [property.mainImage];
+      if (globalCache[cacheKey]) {
+        setExtraData({ ...globalCache[cacheKey], loading: false });
+        return;
+      }
 
-  const priceValue = Number(property.price);
-  const isRental = property.operation === "rent";
+      try {
+        const res = await fetch(
+          `https://lightslategrey-stork-838501.hostingersite.com/api/inmovilla/api_v1.php?action=detail&id=${property.cod_ofer}&lang=${langId}`
+        );
+        const result = await res.json();
+        
+        const ficha = result.ficha || {};
+        const desc = result.descripciones?.[property.cod_ofer]?.[langId] || {};
+        const fotosObj = result.fotos?.[property.cod_ofer] || {};
+        
+        const gallery = Object.values(fotosObj).filter((url): url is string => typeof url === 'string' && url.includes('http'));
 
-  const nextImg = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIndex((prev) => (prev + 1) % images.length);
-  };
+        const finalData = {
+          images: gallery.length > 0 ? gallery : (property.foto ? [property.foto] : []),
+          detailedTitle: desc.titulo || ficha.titulo || property.poblacion || "Propiedad"
+        };
 
-  const prevImg = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+        globalCache[cacheKey] = finalData;
+        setExtraData({ ...finalData, loading: false });
+      } catch (err) {
+        setExtraData(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchDetails();
+  }, [property.cod_ofer, i18n.language, property.poblacion, property.foto]);
+
+  const isRental = Number(property.keyacci) === 2;
+  const displayPrice = isRental ? property.precioalq : property.precioinmo;
+  const hasImages = extraData.images.length > 0;
 
   return (
     <article
-      className="group bg-white flex flex-col h-[660px] relative
-                 transition-all duration-700 ease-in-out
-                 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.08)]
-                 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)]
-                 hover:-translate-y-2 overflow-hidden"
+      className="group bg-white flex flex-col min-h-[700px] h-full relative transition-all duration-1000 border border-stone-100 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* ================= IMAGE ================= */}
-      <div className="relative h-[420px] overflow-hidden bg-stone-100">
+      {/* --- SECTION VISUELLE (IMAGE OU PLACEHOLDER) --- */}
+      <div className="relative h-[380px] w-full overflow-hidden bg-[#f1ece1] shrink-0">
         <AnimatePresence mode="wait">
-          <motion.img
-            key={index}
-            src={images[index]}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src =
-                "https://placehold.co/800x600?text=Property";
-            }}
-            alt={property.title}
-          />
+          {hasImages ? (
+            <motion.img
+              key={extraData.images[index]}
+              src={extraData.images[index]}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, scale: isHovered ? 1.05 : 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#333333]">
+              <span className="font-playfair italic text-4xl tracking-[0.2em] text-gold opacity-100">
+                DEM
+              </span>
+            </div>
+          )}
         </AnimatePresence>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 opacity-60" />
-
-        {/* Navigation */}
-        {images.length > 1 && (
-          <div
-            className={`absolute inset-0 flex items-center justify-between px-4 z-20 transition-all duration-500 ${
-              isHovered ? "opacity-100" : "opacity-0 invisible"
-            }`}
-          >
-            <button
-              onClick={prevImg}
-              aria-label={t("property.actions.previousImage")}
-              className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center
-                         hover:bg-[#C5A059] hover:text-white transition-colors shadow-lg"
+        {/* Flèches Slider */}
+        {extraData.images.length > 1 && isHovered && (
+          <div className="absolute inset-0 flex items-center justify-between px-4 z-20">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIndex(prev => (prev - 1 + extraData.images.length) % extraData.images.length); }}
+              className="w-10 h-10 bg-black/10 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all"
             >
               <ChevronLeft size={18} />
             </button>
-            <button
-              onClick={nextImg}
-              aria-label={t("property.actions.nextImage")}
-              className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center
-                         hover:bg-[#C5A059] hover:text-white transition-colors shadow-lg"
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIndex(prev => (prev + 1) % extraData.images.length); }}
+              className="w-10 h-10 bg-black/10 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black transition-all"
             >
               <ChevronRight size={18} />
             </button>
           </div>
         )}
 
-        {/* Operation badge */}
         <div className="absolute top-6 left-6 z-20">
-          <span className="bg-white px-4 py-2 font-oswald text-[10px] uppercase tracking-[0.2em] shadow-sm">
-            {t(`property.operation.${property.operation}`)}
+          <span className="bg-stone-900 text-white px-4 py-1.5 font-oswald text-[9px] uppercase tracking-[0.2em]">
+            {isRental ? t('property.operation.rent') : t('property.operation.sale')}
           </span>
         </div>
 
-        {/* Preview */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onPreview();
-          }}
-          aria-label={t("property.actions.preview")}
-          className="absolute top-6 right-6 w-10 h-10 bg-white shadow-sm
-                     flex items-center justify-center text-stone-500
-                     hover:text-[#C5A059] transition-all z-30"
+        <button 
+          onClick={(e) => { e.stopPropagation(); onPreview(property); }} 
+          className="absolute top-6 right-6 w-10 h-10 bg-white/90 flex items-center justify-center text-stone-900 hover:bg-[#C5A059] hover:text-white transition-all z-30"
         >
           <Maximize2 size={16} />
         </button>
       </div>
 
-      {/* ================= CONTENT ================= */}
-      <div className="flex flex-col flex-1 p-8">
-        <div className="mb-auto">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="font-oswald text-xl uppercase tracking-tight text-stone-900 line-clamp-1">
-              {property.title}
+      {/* --- SECTION CONTENU --- */}
+      <div className="flex flex-col flex-1 p-6 md:p-8 bg-white">
+        <div className="mb-4">
+          <div className="flex justify-between items-start gap-4 mb-2">
+            <h3 className="font-oswald text-[18px] leading-[1.3] uppercase tracking-tight text-stone-900 line-clamp-3 flex-1 min-h-[48px]">
+              {extraData.detailedTitle}
             </h3>
-            <span className="font-oswald text-[10px] text-stone-400 uppercase tracking-widest">
-              {t("property.ref")} {property.reference}
+            <span className="font-oswald text-[9px] text-stone-300 uppercase tracking-widest mt-1.5 shrink-0">
+              {t('property.ref')} {property.ref}
             </span>
           </div>
-
-          <p className="font-playfair italic text-stone-400 text-sm mb-6 flex items-center gap-2">
-            <span className="w-4 h-[1px] bg-[#C5A059]" />
-            {property.location}
+          <p className="font-playfair italic text-stone-400 text-sm flex items-center gap-2 uppercase tracking-wider truncate">
+            <span className="w-4 h-[1px] bg-[#C5A059]/40" />
+            {property.ciudad || property.poblacion}
           </p>
-
-          <div className="flex justify-between border-y border-stone-100 py-6">
-            <Spec
-              icon={<Bed size={16} />}
-              value={property.specs.beds}
-              label={t("property.specs.beds")}
-            />
-            <Spec
-              icon={<Bath size={16} />}
-              value={property.specs.baths}
-              label={t("property.specs.baths")}
-            />
-            <Spec
-              icon={<Ruler size={16} />}
-              value={property.specs.size}
-              label={t("property.specs.size")}
-            />
-          </div>
         </div>
 
-        {/* ================= FOOTER ================= */}
-        <div className="mt-8 flex justify-between items-end">
-          <div>
-            <p className="text-[9px] uppercase tracking-widest text-stone-400 font-oswald mb-1">
-              {t("property.price.label")}
-            </p>
-            <p className="text-2xl font-playfair italic text-[#C5A059]">
-              {priceValue > 0
-                ? `€${priceValue.toLocaleString("fr-FR")}`
-                : t("property.price.onRequest")}
-              {isRental && (
-                <span className="text-xs not-italic text-stone-400 ml-1">
-                  {t("property.price.perMonth")}
-                </span>
-              )}
-            </p>
+        <div className="flex justify-between border-y border-stone-100 py-6 mt-auto">
+          <SpecItem icon={<Bed size={16} />} value={property.total_hab} label={t('property.specs.beds')} />
+          <SpecItem icon={<Bath size={16} />} value={property.banyos} label={t('property.specs.baths')} />
+          <SpecItem icon={<Ruler size={16} />} value={property.m_cons} label={t('property.specs.size')} />
+        </div>
+
+        <div className="flex justify-between items-end pt-6">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[8px] uppercase tracking-[0.2em] text-stone-400 font-oswald">
+              {isRental ? 'INVERSIÓN' : t('property.price.label')}
+            </span>
+            {Number(displayPrice) === 0 ? (
+              <div className="flex items-center gap-2 text-[#C5A059] font-oswald text-[10px] uppercase tracking-widest">
+                <PhoneCall size={12} /> {t('property.price.onRequest')}
+              </div>
+            ) : (
+              <p className="text-2xl font-playfair italic text-stone-900 leading-none">
+                {Number(displayPrice).toLocaleString()} <span className="text-base font-serif">€</span>
+                {isRental && <span className="text-[10px] ml-1 text-stone-400 font-oswald uppercase">/ mo.</span>}
+              </p>
+            )}
           </div>
 
-          <Link
-            to={`/properties/${property.id}`}
-            className="flex items-center gap-3 font-oswald text-[11px]
-                       uppercase tracking-[0.3em] hover:text-[#C5A059]"
+          <button 
+            onClick={() => navigate(`/properties/${property.cod_ofer}`)} 
+            className="flex items-center gap-3 font-oswald text-[10px] uppercase tracking-[0.3em] text-stone-900 group/btn shrink-0"
           >
-            <span className="border-b pb-1">
-              {t("property.actions.viewDetails")}
+            <span className="relative pb-1">
+              {t('property.actions.viewDetails')}
+              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-stone-100 group-hover/btn:bg-[#C5A059] transition-colors duration-500" />
             </span>
-            <ArrowRight size={14} />
-          </Link>
+            <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+          </button>
         </div>
       </div>
     </article>
   );
 };
 
-function Spec({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  value: number;
-  label: string;
-}) {
-  return (
-    <div className="flex-1 flex flex-col items-center gap-1">
-      <div className="text-stone-300">{icon}</div>
-      <span className="font-oswald text-sm">{value}</span>
-      <span className="text-[9px] uppercase tracking-widest text-stone-400">
-        {label}
-      </span>
-    </div>
-  );
-}
+const SpecItem = ({ icon, value, label }: { icon: React.ReactNode; value: any; label: string }) => (
+  <div className="flex flex-col items-center flex-1">
+    <div className="text-[#C5A059]/70 mb-1.5">{icon}</div>
+    <span className="font-playfair text-base text-stone-800 font-medium">{value && value !== "0" ? value : "-"}</span>
+    <span className="font-oswald text-[7px] uppercase tracking-[0.15em] text-stone-300 mt-1">{label}</span>
+  </div>
+);
 
 export default PropertyCard;

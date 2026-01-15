@@ -1,360 +1,274 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-  useSpring,
-} from "framer-motion";
-import {
-  ChevronLeft,
-  X,
-  Heart,
-  Share2,
-  Ruler,
-  Bed,
-  Bath,
-  MapPin,
-  Info,
-  Zap,
-  ArrowRight,
-  Building2,
-  ShieldCheck,
-} from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft, Share2, MapPin, Bed, Bath, Ruler,
+  ShieldCheck, ExternalLink, Printer
+} from "lucide-react";
 
-import type { Property } from "@/types/property";
-import { mapInmovillaToProperty } from "@/lib/property-mapper";
-import { fetchPropertyById } from "@/services/inmovillaApi";
+import PropertyGallery from "@/components/property/PropertyGallery";
+import PropertySpecs from "@/components/property/PropertySpecs";
+import PropertyMap from "@/components/property/PropertyMap";
+import PropertyContactForm from "@/components/property/PropertyContactForm";
 
-/* =========================================================
-   HELPERS
-========================================================= */
-function cleanDescription(description?: string) {
-  if (!description || description === "No description available.") return "";
-  return description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+import type { Property } from "@/hooks/useProperties";
+
+// Extension de l'interface pour matcher l'API Inmovilla
+interface PropertyExtended extends Omit<Property, 'zona' | 'nbtipo' | 'ciudad' | 'precioinmo' | 'total_hab' | 'banyos' | 'm_cons'> {
+  titulo?: string;
+  descrip?: string;
+  fotos_list?: string[];
+  nbconservacion?: string;
+  zona: string;
+  nbtipo: string;
+  ciudad: string;
+  antiguedad?: number;
+  ibi?: string | number;
+  energialetra?: string;
+  acciones?: string;
+  precioinmo?: string | number;
+  total_hab?: string | number;
+  banyos?: string | number;
+  m_cons?: string | number;
 }
 
-/* =========================================================
-   PAGE
-========================================================= */
-export default function PropertyDetailPage() {
+const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const [property, setProperty] = useState<Property | null>(null);
+  const [property, setProperty] = useState<PropertyExtended | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImg, setSelectedImg] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
-  /* CONTACT FORM */
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  /* HERO ANIMATION */
-  const { scrollYProgress } = useScroll();
-  const smooth = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const heroScale = useTransform(smooth, [0, 0.3], [1, 1.08]);
-  const heroOpacity = useTransform(smooth, [0, 0.35], [1, 0]);
-  const textY = useTransform(smooth, [0, 0.35], [0, 90]);
-
-  /* LOAD PROPERTY */
-  useEffect(() => {
+    useEffect(() => {
     if (!id) return;
-
-    const load = async () => {
+    const fetchDetail = async () => {
       setLoading(true);
       try {
-        const data = await fetchPropertyById(id, 1);
-        const raw = data?.ficha?.[1];
-        if (!raw) {
-          setProperty(null);
-          return;
+        const langId = i18n.language.startsWith('en') ? '2' : '1';
+        const res = await fetch(`https://lightslategrey-stork-838501.hostingersite.com/api/inmovilla/api_v1.php?action=detail&id=${id}&lang=${langId}`);
+        const result = await res.json();
+        
+        if (result?.ficha?.[1]) {
+          const ficha = result.ficha[1];
+          const descData = result.descripciones?.[id];
+          const translation = descData?.[langId] || descData?.['1'] || {};
+
+          setProperty({
+            ...ficha,
+            titulo: translation.titulo || "Exclusive Property",
+            descrip: translation.descrip || "",
+            fotos_list: result.fotos?.[id] || [],
+            zona: ficha.zona || "",
+            nbtipo: ficha.nbtipo || "Residence",
+            ciudad: ficha.ciudad || ""
+          });
         }
-        setProperty(mapInmovillaToProperty(raw, data.descripciones, 1));
-      } catch {
-        setProperty(null);
+      } catch (err) {
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
+    fetchDetail();
+    window.scrollTo(0, 0);
+  }, [id, i18n.language]);
 
-    load();
-    window.scrollTo({ top: 0 });
-  }, [id]);
+  
+  // Définition des onglets traduits
+  const tabs = useMemo(() => [
+    { id: "overview", label: t('propertyDetail.tabs.description', 'Description') },
+    { id: "details", label: t('propertyDetail.tabs.details', 'Details') },
+    { id: "location", label: t('propertyDetail.tabs.location', 'Location') },
+  ], [t]);
 
-  /* FORM SUBMIT */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!property) return;
-
-    setSending(true);
-    try {
-      await fetch("/api/lead.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message,
-          reference: property.reference,
-        }),
-      });
-      setSent(true);
-      setForm({ name: "", email: "", message: "" });
-    } catch {
-      alert(t("contact.form.error"));
-    } finally {
-      setSending(false);
-    }
-  };
-
-  if (loading) {
+  if (loading || !property) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#FDFCFB]">
-        <div className="w-12 h-12 border border-black/20 border-t-black rounded-full animate-spin" />
+      <div className="h-screen flex items-center justify-center bg-[#FCFCFB]">
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="font-playfair italic text-stone-400 tracking-[0.3em] uppercase text-[10px]"
+        >
+          Loading Experience...
+        </motion.div>
       </div>
     );
   }
-
-  if (!property) {
-    return (
-      <div className="h-screen flex items-center justify-center font-oswald uppercase tracking-widest text-stone-400">
-        Property not found
-      </div>
-    );
-  }
-
-  const images =
-    property.images && property.images.length > 0
-      ? property.images
-      : [property.mainImage];
 
   return (
-    <main className="bg-[#FDFCFB] min-h-screen">
-      {/* ================= HERO ================= */}
-      <section className="relative h-screen overflow-hidden bg-black">
-        <motion.div
-          style={{ scale: heroScale, opacity: heroOpacity }}
-          className="absolute inset-0"
+    <div className="min-h-screen bg-[#FCFCFB] text-stone-900 font-light">
+      {/* --- NAVIGATION --- */}
+      <nav className="fixed top-0 w-full z-[60] bg-white/80 backdrop-blur-md border-b border-stone-100 p-6 flex justify-between items-center px-8 md:px-12">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 font-oswald text-[9px] uppercase tracking-[0.3em] text-stone-500 hover:text-stone-900 transition-colors"
         >
-          <img
-            src={property.mainImage}
-            className="w-full h-full object-cover"
-            alt={property.title}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
-        </motion.div>
-
-        <div className="absolute top-0 left-0 w-full p-8 md:p-12 flex justify-between z-30">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-3 text-white font-oswald text-[10px] uppercase tracking-[0.4em]"
-          >
-            <div className="w-10 h-10 border border-white/20 rounded-full flex items-center justify-center">
-              <ChevronLeft size={16} />
-            </div>
-            {t("back", "Retour")}
+          <ArrowLeft size={14} /> {t('nav.home')}
+        </button>
+        <div className="flex items-center gap-8">
+          <Share2 size={16} className="text-stone-300 hover:text-stone-900 cursor-pointer transition-colors" />
+          <button className="bg-stone-900 text-white px-8 py-2.5 text-[9px] font-oswald uppercase tracking-[0.2em] hover:bg-[#C5A059] transition-all">
+            {t('propertyDetail.contact', 'Enquire')}
           </button>
-          <div className="flex gap-6">
-            <Share2 className="text-white/80" size={18} />
-            <Heart className="text-white/80" size={18} />
-          </div>
         </div>
+      </nav>
 
-        <motion.div
-          style={{ y: textY }}
-          className="absolute bottom-24 left-0 w-full px-8 md:px-24 z-20"
-        >
-          <p className="text-[#A47C3B] font-oswald tracking-[0.4em] uppercase text-xs mb-6">
-            {property.location}
-          </p>
-          <h1 className="text-5xl md:text-8xl font-oswald uppercase text-white leading-[0.9] mb-6">
-            {property.title}
-          </h1>
-          <p className="text-4xl md:text-6xl italic font-playfair text-[#A47C3B]">
-            €{property.price.toLocaleString("fr-FR")}
-          </p>
-        </motion.div>
-      </section>
+      <main className="pt-32 pb-32 max-w-[1400px] mx-auto px-6 md:px-12">
 
-      {/* ================= CONTENT ================= */}
-      <section className="max-w-[1600px] mx-auto px-8 md:px-24 py-32 grid grid-cols-1 lg:grid-cols-12 gap-24">
-        {/* LEFT */}
-        <div className="lg:col-span-7 space-y-24">
-          {/* STATS */}
-          <div className="flex flex-wrap gap-x-20 gap-y-10 border-b pb-16">
-            <Stat icon={<Ruler />} label="Surface" value={`${property.specs.size} m²`} />
-            <Stat icon={<Bed />} label="Bedrooms" value={property.specs.beds} />
-            <Stat icon={<Bath />} label="Bathrooms" value={property.specs.baths} />
-            <Stat icon={<Zap />} label="Operation" value={property.operationLabel} />
-          </div>
-
-          {/* DESCRIPTION */}
-          {cleanDescription(property.description) && (
-            <p className="font-playfair italic text-2xl leading-relaxed text-stone-800">
-              {cleanDescription(property.description)}
-            </p>
-          )}
-
-          {/* DETAILS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
-            <Detail icon={<Building2 />} label="Property type" value={property.propertyType} />
-            <Detail icon={<Info />} label="Reference" value={property.reference} />
-            <Detail icon={<MapPin />} label="Location" value={property.location} />
-            <Detail icon={<ShieldCheck />} label="Status" value={property.status} />
-          </div>
-
-          {/* GALLERY */}
-          <div className="grid grid-cols-2 gap-8">
-            {images.map((img, i) => (
-              <motion.button
-                key={i}
-                onClick={() => setSelectedImg(i)}
-                className={`relative overflow-hidden ${
-                  i === 0 ? "col-span-2 h-[600px]" : "h-[400px]"
-                }`}
-              >
-                <img
-                  src={img}
-                  className="w-full h-full object-cover transition-transform duration-[1200ms] ease-out hover:scale-[1.04]"
-                />
-                {i === 0 && (
-                  <div className="absolute bottom-8 left-8 bg-black/60 backdrop-blur px-6 py-3 text-white font-oswald text-[10px] tracking-[0.4em] uppercase">
-                    {images.length} photos
-                  </div>
-                )}
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
-        {/* RIGHT – FORM */}
-        <div className="lg:col-span-5">
-          <div className="sticky top-16 bg-white border p-14 shadow-sm">
-            <h3 className="font-oswald text-2xl uppercase tracking-widest mb-10">
-              Contact
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-10">
-              <input
-                required
-                placeholder={t("contact.form.fields.name")}
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full border-b py-3 outline-none"
-              />
-
-              <input
-                required
-                type="email"
-                placeholder={t("contact.form.fields.email")}
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full border-b py-3 outline-none"
-              />
-
-              <textarea
-                rows={3}
-                placeholder={t("contact.form.fields.message")}
-                value={form.message}
-                onChange={(e) => setForm({ ...form, message: e.target.value })}
-                className="w-full border-b py-3 outline-none resize-none"
-              />
-
-              <button
-                disabled={sending}
-                className="w-full bg-black text-white py-6 uppercase font-oswald tracking-[0.4em] text-[10px] flex items-center justify-center gap-4 hover:bg-[#A47C3B] transition"
-              >
-                {sending ? "…" : t("contact.form.submit")}
-                <ArrowRight size={14} />
-              </button>
-
-              {sent && (
-                <p className="text-sm italic text-green-700">
-                  {t("contact.form.success")}
-                </p>
-              )}
-            </form>
-          </div>
-        </div>
-      </section>
-
-      {/* LIGHTBOX */}
-      <AnimatePresence>
-        {selectedImg !== null && (
+        {/* --- HEADER RAFFINÉ --- */}
+        <header className="mb-16 text-center max-w-4xl mx-auto">
           <motion.div
-            className="fixed inset-0 bg-black z-[9999] flex items-center justify-center p-8 cursor-zoom-out"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedImg(null)}
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-center gap-3 mb-6 text-[#C5A059] font-oswald text-[10px] uppercase tracking-[0.5em] font-bold"
           >
-            <button className="absolute top-10 right-10 text-white">
-              <X size={40} />
-            </button>
-            <motion.img
-              src={images[selectedImg]}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="max-w-full max-h-[90vh] object-contain"
-            />
+            <span>Ref. {property.ref}</span>
+            <span className="w-8 h-[1px] bg-stone-200"></span>
+            <span>{property.nbtipo}</span>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
-  );
-}
 
-/* =========================================================
-   SUB COMPONENTS
-========================================================= */
-function Stat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string | number;
-}) {
-  return (
-    <div className="flex flex-col gap-4">
-      <div className="text-[#A47C3B]">{icon}</div>
-      <p className="text-[9px] tracking-widest uppercase text-stone-400">{label}</p>
-      <p className="font-oswald uppercase">{value}</p>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-playfair italic text-stone-900 leading-[1.1] mb-8"
+          >
+            {property.titulo}
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+            className="flex items-center justify-center gap-2 text-stone-400 font-playfair italic text-xl"
+          >
+            <MapPin size={18} className="text-[#C5A059]/60" />
+            <span>{property.zona}, {property.ciudad}</span>
+          </motion.div>
+        </header>
+
+        {/* --- GALLERY --- */}
+        <section className="mb-20">
+          <PropertyGallery property={property as any} />
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+          {/* --- COLONNE GAUCHE: CONTENU --- */}
+          <div className="lg:col-span-8">
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-4 gap-4 py-10 border-y border-stone-100 mb-16">
+              <QuickStat icon={Bed} value={property.total_hab} label={t('property.beds', 'Beds')} />
+              <QuickStat icon={Bath} value={property.banyos} label={t('property.baths', 'Baths')} />
+              <QuickStat icon={Ruler} value={`${property.m_cons} m²`} label={t('property.built', 'Area')} />
+              <QuickStat icon={ShieldCheck} value={property.nbconservacion} label={t('property.status', 'Status')} />
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="flex gap-12 border-b border-stone-100 mb-12">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`pb-6 font-oswald text-[11px] uppercase tracking-[0.4em] transition-all relative ${activeTab === tab.id ? "text-stone-900" : "text-stone-300 hover:text-stone-500"
+                    }`}
+                >
+                  {tab.label}
+                  {activeTab === tab.id && (
+                    <motion.div layoutId="activeTabLine" className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-[#C5A059]" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Panels */}
+            <div className="min-h-[400px]">
+              <AnimatePresence mode="wait">
+                {activeTab === "overview" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    key="overview"
+                    className="prose prose-stone max-w-none text-stone-500 font-serif italic text-xl leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: property.descrip || "" }}
+                  />
+                )}
+
+                {activeTab === "details" && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key="details">
+                    <PropertySpecs property={property as any} />
+                  </motion.div>
+                )}
+
+                {activeTab === "location" && (
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} key="location"
+                    className="h-[550px] rounded-sm overflow-hidden border border-stone-100 grayscale hover:grayscale-0 transition-all duration-700 contrast-[1.05]"
+                  >
+                    <PropertyMap property={property as any} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* --- COLONNE DROITE: SIDEBAR --- */}
+          <aside className="lg:col-span-4">
+            <div className="sticky top-32 space-y-10">
+
+              {/* Price Box */}
+              <div className="p-10 bg-white border border-stone-100 shadow-[20px_20px_60px_rgba(0,0,0,0.02)]">
+                <div className="mb-10 pb-8 border-b border-stone-50">
+                  <span className="font-oswald text-[10px] uppercase tracking-[0.3em] text-stone-400 block mb-3">
+                    {t('property.investment', 'Investment')}
+                  </span>
+                  <p className="text-4xl font-playfair italic text-stone-900">
+                    {property.precioinmo && Number(property.precioinmo) > 0
+                      ? `${Number(property.precioinmo).toLocaleString()} €`
+                      : t('property.priceOnRequest', 'Price on Request')}
+                  </p>
+                </div>
+
+                {/* Formulaire avec injection de la Ref et du Prix */}
+                <PropertyContactForm
+                  propertyRef={property.ref}
+                  propertyPrice={property.precioinmo}
+                />
+              </div>
+
+              {/* Secondary Actions */}
+              <div className="space-y-3">
+                <SidebarAction icon={Printer} label={t('propertyDetail.print', 'Print Fact Sheet')} />
+                <SidebarAction icon={ExternalLink} label={t('propertyDetail.virtualTour', 'Virtual Tour 360°')} />
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
     </div>
   );
-}
+};
 
-function Detail({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value?: string | number;
-}) {
-  return (
-    <div className="flex justify-between border-b py-4">
-      <div className="flex items-center gap-3 text-stone-400">
-        {icon}
-        <span className="font-oswald text-[10px] uppercase tracking-widest">
-          {label}
-        </span>
-      </div>
+// --- SOUS-COMPOSANTS INTERNES ---
 
-      <span className="font-playfair italic text-lg text-stone-800">
-        {value ?? "—"}
-      </span>
+const QuickStat = ({ icon: Icon, value, label }: { icon: any, value: any, label: string }) => (
+  <div className="flex flex-col items-center text-center gap-3">
+    <div className="text-[#C5A059]/40">
+      <Icon size={22} strokeWidth={1} />
     </div>
-  );
-}
+    <div>
+      <span className="block text-xl font-playfair text-stone-800 mb-1">{value || "—"}</span>
+      <span className="block text-[8px] uppercase tracking-[0.2em] text-stone-400 font-bold">{label}</span>
+    </div>
+  </div>
+);
 
+const SidebarAction = ({ icon: Icon, label }: { icon: any, label: string }) => (
+  <button className="w-full flex items-center justify-between p-5 border border-stone-100 text-[9px] font-oswald uppercase tracking-[0.3em] text-stone-400 hover:text-stone-900 hover:bg-white transition-all group">
+    <span className="flex items-center gap-4">
+      <Icon size={14} className="group-hover:text-[#C5A059] transition-colors" />
+      {label}
+    </span>
+    <motion.div whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 400 }}>
+      <ArrowLeft size={12} className="rotate-180 opacity-30" />
+    </motion.div>
+  </button>
+);
+
+export default PropertyDetails;
