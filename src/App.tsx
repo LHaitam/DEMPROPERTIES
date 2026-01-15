@@ -9,6 +9,8 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Properties from "@/pages/Properties";
 import PropertyDetails from "@/pages/properties/[id]";
+import "leaflet/dist/leaflet.css";
+
 
 // Utilitaire pour remonter en haut à chaque clic sur un lien
 function ScrollToTop() {
