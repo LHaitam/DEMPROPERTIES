@@ -219,7 +219,8 @@
     "tabs": {
       "description": "Description",
       "details": "Details",
-      "location": "Location"
+      "location": "Location",
+      "video": "Video"
     },
     "sections": {
       "admin": "Administration",

@@ -218,7 +218,8 @@
     "tabs": {
       "description": "Descripción",
       "details": "Detalles",
-      "location": "Ubicación"
+      "location": "Ubicación",
+      "video": "Video"
     },
     "sections": {
       "admin": "Administración",
