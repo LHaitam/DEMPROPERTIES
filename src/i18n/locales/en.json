@@ -291,5 +291,15 @@
   },
   "whatsapp": {
     "message": "Hello, I would like to receive more information about your properties."
+  },
+  "404": {
+    "title": "Page Not Found",
+    "message": "The path you are looking for does not exist or has been moved.",
+    "backHome": "Back to Home"
+  },
+  "errors": {
+    "property_not_found_title": "Property Currently Unavailable",
+    "property_not_found_text": "We couldn't load the details for this property. It might have been sold or there's a temporary connection issue.",
+    "loading_properties": "Error loading the property list. Please try again."
   }
 }

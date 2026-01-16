@@ -64,8 +64,8 @@ const Footer: React.FC = () => {
             © {new Date().getFullYear()} DEM Properties — {t('footer.rights')}
           </div>
           <div className="flex gap-8 text-[10px] text-stone-600 uppercase tracking-[0.2em]">
-            <a href="/legal" className="hover:text-stone-400 transition-colors">{t('footer.legal')}</a>
-            <a href="/privacy" className="hover:text-stone-400 transition-colors">{t('footer.privacy')}</a>
+            <a href="#" className="hover:text-stone-400 transition-colors">{t('footer.legal')}</a>
+            <a href="#" className="hover:text-stone-400 transition-colors">{t('footer.privacy')}</a>
           </div>
         </div>
       </div>

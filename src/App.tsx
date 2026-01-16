@@ -13,6 +13,9 @@ import Properties from "@/pages/Properties";
 import PropertyDetails from "@/pages/properties/[id]";
 import "leaflet/dist/leaflet.css";
 import WhatsAppButton from "./components/layout/WhatsAppButton";
+import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./components/common/ErrorBoundary";
+import { PropertyErrorFallback } from "./components/properties/PropertyErrorFallback";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -23,9 +26,8 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
-  // Textos dinámicos según el idioma seleccionado
   const seoData = {
     title: i18n.language === "es"
       ? "DEM Properties | Servicios Inmobiliarios y Selección de Viviendas"
@@ -41,7 +43,6 @@ export default function App() {
         <Helmet>
           <title>{seoData.title}</title>
           <meta name="description" content={seoData.description} />
-          {/* Cambia 'tu-dominio.com' por tu URL real en Hostinger */}
           <link rel="canonical" href="https://demproperties.es" />
           <meta property="og:title" content={seoData.title} />
           <meta property="og:description" content={seoData.description} />
@@ -50,13 +51,32 @@ export default function App() {
         <ScrollToTop />
         <Header />
         <WhatsAppButton />
+
         <main className="min-h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/properties" element={<Properties />} />
-            <Route path="/properties/:id" element={<PropertyDetails />} />
+
+            {/* CORRECTION : L'ErrorBoundary doit envelopper l'élément à l'intérieur de la Route */}
+            <Route
+              path="/properties"
+              element={
+                <ErrorBoundary fallback={<div className="py-40 text-center font-playfair italic text-stone-500">{t('errors.loading_properties', 'Error loading properties...')}</div>}>
+                  <Properties />
+                </ErrorBoundary>
+              }
+            />
+
+            <Route
+              path="/properties/:id"
+              element={
+                <ErrorBoundary fallback={<PropertyErrorFallback />}>
+                  <PropertyDetails />
+                </ErrorBoundary>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 

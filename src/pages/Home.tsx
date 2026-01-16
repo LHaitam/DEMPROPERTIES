@@ -24,7 +24,8 @@ const Home: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-cream flex items-center justify-center z-50">
+      /* z-index passé à 9999 pour être au-dessus de tout */
+      <div className="fixed inset-0 bg-cream flex items-center justify-center z-[9999]">
         <div className="text-center">
           <h1
             className="font-oswald text-3xl md:text-4xl uppercase tracking-[0.35em]"

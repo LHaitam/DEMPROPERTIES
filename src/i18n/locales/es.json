@@ -290,5 +290,15 @@
   },
   "whatsapp": {
     "message": "Hola, me gustaría recibir más información sobre sus propiedades."
+  },
+  "404": {
+    "title": "Página no encontrada",
+    "message": "La ruta que busca no existe o ha sido movida.",
+    "backHome": "Volver al inicio"
+  },
+  "errors": {
+    "property_not_found_title": "Propiedad no disponible",
+    "property_not_found_text": "No pudimos cargar los detalles de esta propiedad. Es posible que ya se haya vendido o haya un error temporal de conexión.",
+    "loading_properties": "Error al cargar el catálogo de propiedades. Por favor, inténtelo de nuevo."
   }
 }

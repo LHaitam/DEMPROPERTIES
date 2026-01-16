@@ -43,13 +43,11 @@ const Header: React.FC = () => {
             i18n.changeLanguage(lang);
             if (mobile) setIsMenuOpen(false);
           }}
-          className={`font-oswald tracking-[0.3em] transition-colors py-1 ${
-            mobile ? "text-sm" : "text-xs"
-          } ${
-            i18n.language === lang
+          className={`font-oswald tracking-[0.3em] transition-colors py-1 ${mobile ? "text-sm" : "text-xs"
+            } ${i18n.language === lang
               ? mobile ? "text-[#CFA670]" : (isScrolled ? "text-[#A47C3B]" : "text-white")
               : mobile ? "text-stone-500 hover:text-white" : (isScrolled ? "text-stone-300 hover:text-stone-800" : "text-white/40 hover:text-white")
-          }`}
+            }`}
         >
           {lang.toUpperCase()}
         </button>
@@ -62,24 +60,43 @@ const Header: React.FC = () => {
       <nav className={`fixed top-0 left-0 w-full z-[60] px-6 lg:px-12 transition-all duration-500 ease-out 
         ${isScrolled ? "bg-white/95 backdrop-blur-md border-b border-stone-100 py-3 shadow-sm" : "bg-transparent py-8"}`}>
         <div className="max-w-[1800px] mx-auto flex items-center justify-between">
-          
+
           {/* LOGO BRAND */}
-          <Link to="/" className="flex items-center gap-4 group z-[70]">
-            <div className={`border transition-all duration-500 flex items-center justify-center
-              ${isScrolled ? "border-stone-200 w-10 h-10" : "border-white/30 w-14 h-14"}`}>
-              <img 
-                src="/logo.webp" 
-                alt="Logo" 
-                className={`object-contain transition-all duration-500 ${isScrolled ? "w-6 h-6" : "w-8 h-8"} 
-                ${(!isScrolled && isHome) ? "brightness-0 invert" : ""}`} 
+          <Link to="/" className="flex items-center gap-4 group z-[70] h-full">
+            {/* CADRE DU LOGO */}
+            <div className={`relative transition-all duration-500 flex items-center justify-center shrink-0 p-[1px]
+              ${isScrolled ? "w-10 h-10" : "w-14 h-14"}`}>
+              
+              {/* Le contour doré (Bordure) */}
+              <div className={`absolute inset-0 transition-opacity duration-500
+                ${isScrolled 
+                  ? "bg-gradient-to-tr from-[#A47C3B] via-[#CFA670] to-[#E3C38B] opacity-100" 
+                  : "border border-white/30 opacity-100" // Reste blanc semi-transparent quand on est en haut (si tu veux)
+                }`} 
+              />
+
+              {/* Le fond (pour simuler la bordure si tu veux que l'intérieur soit vide ou plein) */}
+              <div className={`absolute inset-[1px] bg-white transition-all duration-500
+                ${isScrolled ? "opacity-100" : "opacity-0"}`} 
+              />
+
+              {/* L'image du Logo */}
+              <img
+                src="/logo.webp"
+                alt="Logo"
+                className={`relative z-10 object-contain transition-all duration-500 
+                  ${isScrolled ? "w-6 h-6" : "w-8 h-8"} 
+                  ${(!isScrolled && isHome) ? "brightness-0 invert" : ""}`}
               />
             </div>
-            <div className="leading-[0.75]">
-              <span className={`block font-oswald uppercase tracking-tighter transition-colors duration-500 font-bold
+
+            {/* TEXTE : On retire leading-[0.75] qui peut écraser l'alignement selon la police */}
+            <div className="flex flex-col justify-center">
+              <span className={`block font-oswald uppercase tracking-tighter transition-all duration-500 font-bold leading-none
                 ${isScrolled ? "text-2xl text-stone-900" : "text-4xl md:text-5xl text-white"}`}>
                 DEM
               </span>
-              <span className={`block font-oswald uppercase tracking-[0.4em] transition-all duration-500 font-light mt-1
+              <span className={`block font-oswald uppercase tracking-[0.4em] transition-all duration-500 font-light leading-none mt-1.5
                 ${isScrolled ? "text-[8px] bg-clip-text text-transparent bg-gradient-to-r from-[#A47C3B] to-[#CFA670]" : "text-[10px] md:text-[12px] text-white/80"}`}>
                 Properties
               </span>
@@ -114,7 +131,7 @@ const Header: React.FC = () => {
             {/* Header Overlay: Langues Mobile + Close */}
             <div className="flex justify-between items-center p-8 md:p-12">
               <LanguageSelector mobile />
-              
+
               <button onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-4 p-2">
                 <span className="font-oswald text-[10px] uppercase tracking-[0.5em] text-stone-500 group-hover:text-white transition-colors">Close</span>
                 <X className="w-10 h-10 text-[#CFA670] group-hover:rotate-90 transition-transform duration-500" />
