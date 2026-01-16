@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { X, Phone } from "lucide-react"; // Phone est maintenant utilisé dans le menu mobile
+import { X, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +34,29 @@ const Header: React.FC = () => {
     { label: t("nav.contact", "Contact"), href: "/contact" },
   ];
 
+  const LanguageSelector = ({ mobile = false }: { mobile?: boolean }) => (
+    <div className={`flex items-center ${mobile ? "gap-8" : "gap-6"}`}>
+      {["en", "es"].map((lang) => (
+        <button
+          key={lang}
+          onClick={() => {
+            i18n.changeLanguage(lang);
+            if (mobile) setIsMenuOpen(false);
+          }}
+          className={`font-oswald tracking-[0.3em] transition-colors py-1 ${
+            mobile ? "text-sm" : "text-xs"
+          } ${
+            i18n.language === lang
+              ? mobile ? "text-[#CFA670]" : (isScrolled ? "text-[#A47C3B]" : "text-white")
+              : mobile ? "text-stone-500 hover:text-white" : (isScrolled ? "text-stone-300 hover:text-stone-800" : "text-white/40 hover:text-white")
+          }`}
+        >
+          {lang.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <>
       <nav className={`fixed top-0 left-0 w-full z-[60] px-6 lg:px-12 transition-all duration-500 ease-out 
@@ -65,17 +88,9 @@ const Header: React.FC = () => {
 
           {/* ACTIONS */}
           <div className="flex items-center gap-8">
-            <div className="hidden md:flex items-center gap-6">
-              {["en", "es"].map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => i18n.changeLanguage(lang)}
-                  className={`font-oswald text-xs tracking-[0.3em] transition-colors py-1
-                    ${i18n.language === lang ? (isScrolled ? "text-[#A47C3B]" : "text-white") : (isScrolled ? "text-stone-300 hover:text-stone-800" : "text-white/40 hover:text-white")}`}
-                >
-                  {lang.toUpperCase()}
-                </button>
-              ))}
+            {/* Langues Desktop */}
+            <div className="hidden md:block">
+              <LanguageSelector />
             </div>
 
             <button onClick={() => setIsMenuOpen(true)} className={`group flex items-center gap-4 ${isScrolled ? "text-stone-900" : "text-white"}`}>
@@ -96,7 +111,10 @@ const Header: React.FC = () => {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] bg-stone-900 text-stone-100 flex flex-col"
           >
-            <div className="flex justify-end p-8 md:p-12">
+            {/* Header Overlay: Langues Mobile + Close */}
+            <div className="flex justify-between items-center p-8 md:p-12">
+              <LanguageSelector mobile />
+              
               <button onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-4 p-2">
                 <span className="font-oswald text-[10px] uppercase tracking-[0.5em] text-stone-500 group-hover:text-white transition-colors">Close</span>
                 <X className="w-10 h-10 text-[#CFA670] group-hover:rotate-90 transition-transform duration-500" />
@@ -120,7 +138,7 @@ const Header: React.FC = () => {
               </ul>
 
               <div className="mt-20 flex flex-col items-center gap-6">
-                <a href="tel:+34655623860" className="flex items-center gap-3 text-[#CFA670] font-oswald text-xl tracking-widest">
+                <a href="tel:+34655623860" className="flex items-center gap-3 text-[#CFA670] font-oswald text-xl tracking-widest hover:text-white transition-colors">
                   <Phone size={20} /> +34 655 62 38 60
                 </a>
               </div>

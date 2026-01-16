@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft, Share2, MapPin, Bed, Bath, Ruler,
   ShieldCheck
@@ -44,7 +45,6 @@ const PropertyDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
-    
     if (!id) return;
 
     const fetchDetail = async () => {
@@ -82,48 +82,21 @@ const PropertyDetails: React.FC = () => {
     window.scrollTo(0, 0);
   }, [id, i18n.language, t]);
 
-  // LOGIQUE DE PRIX ET MESSAGE (Identique à PropertyCard)
   const priceInfo = useMemo(() => {
-    if (!property) return { formatted: "", raw: "" };
-    
-    // Nettoyage des données de l'API (on ne garde que les chiffres)
+    if (!property) return { formatted: "", raw: 0 };
     const salePrice = String(property.precioinmo || "").replace(/\D/g, "");
-    // On vérifie preciorent ou precioalq selon ce que l'API renvoie
     const rentPrice = String(property.preciorent || property.precioalq || "").replace(/\D/g, "");
-
     const nSale = parseInt(salePrice, 10);
     const nRent = parseInt(rentPrice, 10);
 
-    // 1. Priorité à la Vente
-    if (!isNaN(nSale) && nSale > 0) {
-      return { 
-        formatted: `${nSale.toLocaleString()} €`, 
-        raw: nSale.toString(),
-        isRental: false
-      };
-    } 
-    // 2. Priorité à la Location
-    if (!isNaN(nRent) && nRent > 0) {
-      return { 
-        formatted: `${nRent.toLocaleString()} € ${t('property.price.perMonth')}`, 
-        raw: nRent.toString(),
-        isRental: true
-      };
-    }
-    // 3. Prix sur demande
-    return { 
-      formatted: t('property.price.onRequest'), 
-      raw: "",
-      isRental: false 
-    };
+    if (!isNaN(nSale) && nSale > 0) return { formatted: `${nSale.toLocaleString()} €`, raw: nSale };
+    if (!isNaN(nRent) && nRent > 0) return { formatted: `${nRent.toLocaleString()} € ${t('property.price.perMonth')}`, raw: nRent };
+    return { formatted: t('property.price.onRequest'), raw: 0 };
   }, [property, t]);
 
   const defaultMessage = useMemo(() => {
     if (!property) return "";
-    return t('contact.form.defaultMessage', {
-      ref: property.ref,
-      price: priceInfo.formatted
-    });
+    return t('contact.form.defaultMessage', { ref: property.ref, price: priceInfo.formatted });
   }, [property, priceInfo, t]);
 
   const tabs = useMemo(() => [
@@ -142,11 +115,55 @@ const PropertyDetails: React.FC = () => {
     );
   }
 
+  // CONFIGURATION SEO DYNAMIQUE
+  const seoTitle = `${property.titulo} | Ref: ${property.ref} | Marbella Real Estate`;
+  const seoDescription = `${property.nbtipo} à ${property.zona}, ${property.ciudad}. ${property.total_hab} chambres, ${property.banyos} sdb, ${property.m_cons} m². Découvrez cette opportunité exclusive avec DEM Properties.`;
+
   return (
     <div className="min-h-screen bg-[#FCFCFB] text-stone-900 font-light">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <link rel="canonical" href={`https://demproperties.es/properties/${id}`} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://demproperties.es/properties/${id}`} />
+        {property.fotos_list && property.fotos_list.length > 0 && (
+          <meta property="og:image" content={property.fotos_list[0]} />
+        )}
+
+        {/* JSON-LD pour Immobilier (Schema.org) */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SingleFamilyResidence",
+            "name": property.titulo,
+            "description": seoDescription,
+            "identifier": property.ref,
+            "image": property.fotos_list?.[0],
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": property.ciudad,
+              "addressRegion": "Málaga",
+              "addressCountry": "ES"
+            },
+            "numberOfRooms": property.total_hab,
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": property.m_cons,
+              "unitCode": "MTK"
+            }
+          })}
+        </script>
+      </Helmet>
+
+      {/* Barre de navigation fixe */}
       <nav className="fixed top-0 w-full z-[60] bg-white/80 backdrop-blur-md border-b border-stone-100 p-6 flex justify-between items-center px-8 md:px-12">
         <button onClick={() => navigate(-1)} className="flex items-center gap-2 font-oswald text-[9px] uppercase tracking-[0.3em] text-stone-500 hover:text-stone-900 transition-colors">
-          <ArrowLeft size={14} /> {t('nav.home')}
+          <ArrowLeft size={14} /> {t('nav.properties')}
         </button>
         <div className="flex items-center gap-8">
           <Share2 size={16} className="text-stone-300 hover:text-stone-900 cursor-pointer transition-colors" />
@@ -160,6 +177,7 @@ const PropertyDetails: React.FC = () => {
       </nav>
 
       <main className="pt-32 pb-32 max-w-[1400px] mx-auto px-6 md:px-12">
+        {/* En-tête de la propriété */}
         <header className="mb-16 text-center max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6 text-[#C5A059] font-oswald text-[10px] uppercase tracking-[0.5em] font-bold">
             <span>{t('property.ref')} {property.ref}</span>
@@ -173,19 +191,22 @@ const PropertyDetails: React.FC = () => {
           </div>
         </header>
 
+        {/* Galerie d'images */}
         <section className="mb-20">
           <PropertyGallery property={property as any} />
         </section>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
           <div className="lg:col-span-8">
+            {/* Stats rapides */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-10 border-y border-stone-100 mb-16">
               <QuickStat icon={Bed} value={property.total_hab} label={t('property.specs.beds')} />
               <QuickStat icon={Bath} value={property.banyos} label={t('property.specs.baths')} />
-              <QuickStat icon={Ruler} value={`${property.m_cons} ${t('property.specs.size')}`} label={t('propertyDetail.builtSurface')} />
+              <QuickStat icon={Ruler} value={`${property.m_cons} m²`} label={t('propertyDetail.builtSurface')} />
               <QuickStat icon={ShieldCheck} value={property.nbconservacion} label={t('propertyDetail.conservation')} />
             </div>
 
+            {/* Onglets d'information */}
             <div className="flex gap-12 border-b border-stone-100 mb-12 overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`pb-6 font-oswald text-[11px] uppercase tracking-[0.4em] transition-all whitespace-nowrap relative ${activeTab === tab.id ? "text-stone-900" : "text-stone-300 hover:text-stone-500"}`}>
@@ -206,6 +227,7 @@ const PropertyDetails: React.FC = () => {
             </div>
           </div>
 
+          {/* Barre latérale : Prix et Contact */}
           <aside className="lg:col-span-4" id="contact-section">
             <div className="sticky top-32">
               <div className="p-10 bg-white border border-stone-100 shadow-sm">

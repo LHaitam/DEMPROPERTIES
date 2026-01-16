@@ -1,7 +1,9 @@
-import React, { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "framer-motion";
 import { Check, ArrowRight, Loader2 } from "lucide-react";
+import { Helmet } from "react-helmet-async";
+
 import HeroContact from "@/components/contact/HeroContact";
 import Header from "@/components/layout/Header";
 
@@ -15,15 +17,12 @@ type FieldConfig = {
 };
 
 export default function Contact() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const formRef = useRef<HTMLFormElement | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState<Status>("idle");
 
-  // SEO
-  useEffect(() => {
-    document.title = "DEM Properties | Contact";
-  }, []);
+  const isES = i18n.language === "es";
 
   const scrollToForm = () => {
     sectionRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,14 +35,13 @@ export default function Contact() {
     setStatus("loading");
     const data = new FormData(formRef.current);
 
-    // Formatage pour le script PHP qui envoie à Inmovilla
     const payload = {
       nombre: data.get("user_name"),
       apellidos: data.get("user_lastname") || "",
       email: data.get("user_email"),
       telefono: data.get("user_phone"),
       mensaje: data.get("message"),
-      ref: "WEB_CONTACT", // Référence générique pour la page contact
+      ref: "WEB_CONTACT",
     };
 
     try {
@@ -72,6 +70,38 @@ export default function Contact() {
 
   return (
     <div className="relative min-h-screen w-full bg-cream text-charcoal overflow-hidden">
+      <Helmet>
+        <title>
+          {isES ? "Contacto | DEM Properties Marbella" : "Contact Us | DEM Properties Marbella"}
+        </title>
+        <meta 
+          name="description" 
+          content={isES 
+            ? "Póngase en contacto con DEM Properties para cualquier consulta inmobiliaria en Marbella. Estamos aquí para asesorarle." 
+            : "Get in touch with DEM Properties for any real estate inquiries in Marbella. We are here to advise you."} 
+        />
+        <link rel="canonical" href="https://demproperties.es/contact" />
+        
+        {/* Schema.org pour le support client */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "mainEntity": {
+              "@type": "RealEstateAgent",
+              "name": "DEM Properties",
+              "telephone": "+34655623860",
+              "email": "d.elmoutii@demproperties.es",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Marbella",
+                "addressCountry": "ES"
+              }
+            }
+          })}
+        </script>
+      </Helmet>
+
       <Header />
 
       <HeroContact onScrollClick={scrollToForm} />
@@ -100,7 +130,7 @@ export default function Contact() {
             <p className="font-playfair italic text-xl text-charcoal/70">{t("contact.info.role")}</p>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-8 border-t border-charcoal/10 pt-10">
             <div>
               <h4 className="font-oswald uppercase text-xs tracking-[0.25em] text-gold mb-2">{t("contact.info.locationLabel")}</h4>
               <p className="text-xl font-playfair text-charcoal/80">{t("contact.info.location")}</p>
@@ -111,13 +141,13 @@ export default function Contact() {
             </div>
             <div>
               <h4 className="font-oswald uppercase text-xs tracking-[0.25em] text-gold mb-2">{t("contact.info.emailLabel")}</h4>
-              <a href="mailto:d.elmoutii@demproperties.es" className="block text-xl font-playfair hover:text-gold transition">d.elmoutii@demproperties.es</a>
+              <a href="mailto:d.elmoutii@demproperties.es" className="block text-xl font-playfair hover:text-gold transition break-all">d.elmoutii@demproperties.es</a>
             </div>
           </div>
         </div>
 
         {/* COLONNE DROITE : FORMULAIRE */}
-        <div className="relative">
+        <div className="relative bg-white/50 p-8 md:p-12 backdrop-blur-sm border border-charcoal/5">
           <AnimatePresence mode="wait">
             {status !== "success" ? (
               <motion.form
@@ -131,31 +161,30 @@ export default function Contact() {
               >
                 {fields.map((field) => (
                   <div key={field.name} className="flex flex-col gap-2">
-                    <label className="font-oswald uppercase tracking-[0.25em] text-xs">{field.label}</label>
+                    <label className="font-oswald uppercase tracking-[0.25em] text-[10px] text-charcoal/60">{field.label}</label>
                     <input
                       type={field.type}
                       name={field.name}
                       required={field.required}
-                      placeholder={field.label}
-                      className="bg-transparent border-b border-charcoal/30 py-3 focus:border-gold outline-none transition-colors"
+                      className="bg-transparent border-b border-charcoal/20 py-3 focus:border-gold outline-none transition-colors font-playfair text-lg"
                     />
                   </div>
                 ))}
 
                 <div className="flex flex-col gap-2">
-                  <label className="font-oswald uppercase tracking-[0.25em] text-xs">{t("contact.form.fields.message")}</label>
+                  <label className="font-oswald uppercase tracking-[0.25em] text-[10px] text-charcoal/60">{t("contact.form.fields.message")}</label>
                   <textarea
-                    rows={5}
+                    rows={4}
                     name="message"
                     required
-                    className="bg-transparent border-b border-charcoal/30 py-3 focus:border-gold outline-none transition-colors resize-none"
+                    className="bg-transparent border-b border-charcoal/20 py-3 focus:border-gold outline-none transition-colors resize-none font-playfair text-lg"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="group relative w-full px-12 py-5 bg-charcoal text-cream font-oswald uppercase tracking-[0.25em] overflow-hidden disabled:opacity-70"
+                  className="group relative w-full px-12 py-5 bg-charcoal text-cream font-oswald uppercase tracking-[0.3em] text-xs overflow-hidden disabled:opacity-70 transition-all"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
                     {status === "loading" ? <Loader2 className="animate-spin" size={18} /> : t("contact.form.submit")}
@@ -164,7 +193,7 @@ export default function Contact() {
                 </button>
 
                 {status === "error" && (
-                  <p className="text-red-600 font-playfair text-sm">{t("contact.form.error")}</p>
+                  <p className="text-red-500 font-playfair italic text-center">{t("contact.form.error")}</p>
                 )}
               </motion.form>
             ) : (
@@ -176,10 +205,10 @@ export default function Contact() {
                 <div className="w-20 h-20 rounded-full border border-gold flex items-center justify-center text-gold mx-auto">
                   <Check size={40} />
                 </div>
-                <h3 className="font-playfair text-3xl italic">{t("contact.form.success")}</h3>
+                <h3 className="font-playfair text-3xl italic text-charcoal">{t("contact.form.success")}</h3>
                 <button
                   onClick={() => setStatus("idle")}
-                  className="font-oswald text-xs uppercase tracking-widest text-gold flex items-center gap-2 mx-auto"
+                  className="font-oswald text-[10px] uppercase tracking-[0.3em] text-gold flex items-center gap-2 mx-auto hover:gap-4 transition-all"
                 >
                   {t("contact.success.back")} <ArrowRight size={14} />
                 </button>

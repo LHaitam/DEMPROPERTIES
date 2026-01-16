@@ -52,20 +52,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
         />
       </div>
 
-      {/* ================= TEXTURE TADELAKT ================= */}
-      <div
-        className="
-          absolute inset-0 z-[1]
-          pointer-events-none
-          opacity-[0.18] md:opacity-[0.25]
-          mix-blend-soft-light
-        "
-        style={{
-          backgroundImage: `url("/tadelakt.webp")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      />
+      
 
       {/* ================= GOLD HALO ================= */}
       <div

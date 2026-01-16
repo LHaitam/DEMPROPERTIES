@@ -2,6 +2,7 @@ import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 import { HeroProperties } from "@/components/properties/PropertiesHero";
 import { PropertiesGrid } from "@/components/properties/PropertiesGrid";
@@ -24,6 +25,8 @@ const Properties: React.FC = () => {
 
   const gridRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
+
+  const isES = i18n.language === "es";
 
   const [filters, setFilters] = useState<FilterState>({
     search: "",
@@ -53,21 +56,53 @@ const Properties: React.FC = () => {
   const filteredProperties = useMemo(() => {
     return properties.filter(p => {
       const prop = p as any;
-      const matchSearch = !filters.search || (`${prop.poblacion} ${prop.ciudad} ${prop.ref}`).toLowerCase().includes(filters.search.toLowerCase());
-      const matchOp = filters.operation === "all" || prop.keyacci?.toString() === filters.operation;
-      const matchType = filters.type === "all" || prop.tipoinmo === filters.type;
-      const matchBeds = filters.beds === "all" || Number(prop.dormitorios) >= Number(filters.beds);
+
+      // 0. Ignorer l'objet de pagination (celui qui a la clé 'posicion')
+      if (prop.posicion) return false;
+
+      // 1. Recherche textuelle (Ville ou Réf)
+      // Dans ton JSON c'est 'ciudad' et 'ref'
+      const matchSearch = !filters.search ||
+        (`${prop.ciudad} ${prop.ref}`).toLowerCase().includes(filters.search.toLowerCase());
+
+      // 2. Opération (Vente=1 / Location=2)
+      const matchOp = filters.operation === "all" || String(prop.keyacci) === String(filters.operation);
+
+      // 3. Type de bien (nbtipo dans ton JSON ex: "Apartamento")
+      const matchType = filters.type === "all" || prop.nbtipo === filters.type;
+
+      // 4. Chambres (total_hab dans ton JSON)
+      const matchBeds = filters.beds === "all" || Number(prop.total_hab) >= Number(filters.beds);
+
+      // 5. Référence
       const matchRef = !filters.ref || prop.ref?.toLowerCase().includes(filters.ref.toLowerCase());
-      const matchMinSurf = !filters.minSurface || Number(prop.supconst) >= Number(filters.minSurface);
-      const matchMaxSurf = !filters.maxSurface || Number(prop.supconst) <= Number(filters.maxSurface);
-      const matchPool = !filters.pool || prop.piscina === "S";
-      const matchParking = !filters.parking || prop.parking === "S";
-      const matchSea = !filters.seaViews || prop.vistasmar === "S";
 
-      const price = Number(prop.keyacci) === 2 ? Number(prop.precioalq) : Number(prop.precioinmo);
-      const matchPrice = isNaN(price) || price <= filters.maxPrice;
+      // 6. Surfaces (m_cons dans ton JSON pour surface construite)
+      const surface = Number(prop.m_cons) || 0;
+      const matchMinSurf = !filters.minSurface || surface >= Number(filters.minSurface);
+      const matchMaxSurf = !filters.maxSurface || surface <= Number(filters.maxSurface);
 
-      return matchSearch && matchOp && matchType && matchBeds && matchRef && matchMinSurf && matchMaxSurf && matchPool && matchParking && matchSea && matchPrice;
+      // 7. Caractéristiques (Inmovilla utilise souvent 1 pour Oui, 0 pour Non dans ce JSON)
+      const matchPool = !filters.pool || (Number(prop.piscina_com) === 1 || Number(prop.piscina_prop) === 1);
+      const matchParking = !filters.parking || Number(prop.parking) > 0;
+      const matchSea = !filters.seaViews || Number(prop.vistasalmar) === 1;
+      const matchTerrace = !filters.terrace || Number(prop.terraza) === 1;
+
+      // 8. Prix 
+      // Logic: precioinmo pour vente (keyacci 1), precioalq pour location (keyacci 2)
+      const isRental = String(prop.keyacci) === "2";
+      const price = isRental ? Number(prop.precioalq) : Number(prop.precioinmo);
+
+      // Sécurité : si le prix est 0 (prix sur demande), on décide généralement de l'afficher 
+      // sauf si l'utilisateur a mis un filtre de prix très strict
+      const matchMinPrice = price === 0 || price >= filters.minPrice;
+      const matchMaxPrice = price === 0 || price <= filters.maxPrice;
+
+      return (
+        matchSearch && matchOp && matchType && matchBeds && matchRef &&
+        matchMinSurf && matchMaxSurf && matchPool && matchParking &&
+        matchSea && matchTerrace && matchMinPrice && matchMaxPrice
+      );
     });
   }, [properties, filters]);
 
@@ -87,7 +122,22 @@ const Properties: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Helmet>
+        <title>
+          {isES ? "Viviendas en Venta y Alquiler | DEM Properties Marbella" : "Properties for Sale & Rent | DEM Properties Marbella"}
+        </title>
+        <meta
+          name="description"
+          content={isES
+            ? "Catálogo exclusivo de villas, apartamentos y propiedades off-market en Marbella. Encuentre su hogar ideal con nuestra asesoría experta."
+            : "Exclusive catalog of villas, apartments, and off-market properties in Marbella. Find your ideal home with our expert guidance."}
+        />
+        <link rel="canonical" href="https://demproperties.es/properties" />
+        <meta property="og:title" content={isES ? "Propiedades en Marbella — DEM" : "Marbella Properties — DEM"} />
+      </Helmet>
+
       <Header />
+
       <HeroProperties onExploreClick={scrollToGrid} onFiltersClick={scrollToFilters} />
 
       <div ref={filterRef} className="scroll-mt-20">
@@ -107,7 +157,6 @@ const Properties: React.FC = () => {
                 </span>
               </div>
 
-              {/* Animation de la grille au changement de page */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentPage}
@@ -120,7 +169,7 @@ const Properties: React.FC = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* CONTRÔLES DE PAGINATION ANIMÉS */}
+              {/* PAGINATION */}
               {totalPages > 1 && (
                 <div className="mt-20 flex justify-center items-center gap-6">
                   <motion.button
@@ -141,7 +190,7 @@ const Properties: React.FC = () => {
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
                           whileHover={{ y: -2 }}
-                          className={`relative w-12 h-12 font-oswald text-xs tracking-widest overflow-hidden transition-colors ${currentPage === pageNum ? "text-white" : "text-stone-400 hover:text-stone-900"
+                          className={`relative w-12 h-12 font-oswald text-xs tracking-widest transition-colors ${currentPage === pageNum ? "text-white" : "text-stone-400 hover:text-stone-900"
                             }`}
                         >
                           <span className="relative z-10">{pageNum}</span>
@@ -179,7 +228,7 @@ const Properties: React.FC = () => {
             property={selectedProperty}
             isOpen={isPreviewOpen}
             onClose={() => setIsPreviewOpen(false)}
-            lang={i18n.language} // <--- AJOUTEZ CETTE LIGNE
+            lang={i18n.language}
           />
         )}
       </AnimatePresence>
