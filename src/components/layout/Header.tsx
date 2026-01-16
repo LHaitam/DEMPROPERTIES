@@ -45,7 +45,7 @@ const Header: React.FC = () => {
           }}
           className={`font-oswald tracking-[0.3em] transition-colors py-1 ${mobile ? "text-sm" : "text-xs"
             } ${i18n.language === lang
-              ? mobile ? "text-[#CFA670]" : (isScrolled ? "text-[#A47C3B]" : "text-white")
+              ? mobile ? "text-[#a5694f]" : (isScrolled ? "text-[#A47C3B]" : "text-white")
               : mobile ? "text-stone-500 hover:text-white" : (isScrolled ? "text-stone-300 hover:text-stone-800" : "text-white/40 hover:text-white")
             }`}
         >
@@ -61,47 +61,17 @@ const Header: React.FC = () => {
         ${isScrolled ? "bg-white/95 backdrop-blur-md border-b border-stone-100 py-3 shadow-sm" : "bg-transparent py-8"}`}>
         <div className="max-w-[1800px] mx-auto flex items-center justify-between">
 
-          {/* LOGO BRAND */}
-          <Link to="/" className="flex items-center gap-4 group z-[70] h-full">
-            {/* CADRE DU LOGO */}
-            <div className={`relative transition-all duration-500 flex items-center justify-center shrink-0 p-[1px]
-              ${isScrolled ? "w-10 h-10" : "w-14 h-14"}`}>
-              
-              {/* Le contour doré (Bordure) */}
-              <div className={`absolute inset-0 transition-opacity duration-500
-                ${isScrolled 
-                  ? "bg-gradient-to-tr from-[#A47C3B] via-[#CFA670] to-[#E3C38B] opacity-100" 
-                  : "border border-white/30 opacity-100" // Reste blanc semi-transparent quand on est en haut (si tu veux)
-                }`} 
-              />
+        {/* LOGO BRAND */}
+        <Link to="/" className="flex items-center group z-[70] h-full">
+          <img
+            src="/logo.webp"
+            alt="Logo"
+            className={`object-contain transition-all duration-500
+              ${isScrolled ? "w-28 h-auto" : "w-40 h-auto"}
+              ${(!isScrolled && isHome) ? "brightness-0 invert" : ""}`}
+          />
+        </Link>
 
-              {/* Le fond (pour simuler la bordure si tu veux que l'intérieur soit vide ou plein) */}
-              <div className={`absolute inset-[1px] bg-white transition-all duration-500
-                ${isScrolled ? "opacity-100" : "opacity-0"}`} 
-              />
-
-              {/* L'image du Logo */}
-              <img
-                src="/logo.webp"
-                alt="Logo"
-                className={`relative z-10 object-contain transition-all duration-500 
-                  ${isScrolled ? "w-6 h-6" : "w-8 h-8"} 
-                  ${(!isScrolled && isHome) ? "brightness-0 invert" : ""}`}
-              />
-            </div>
-
-            {/* TEXTE : On retire leading-[0.75] qui peut écraser l'alignement selon la police */}
-            <div className="flex flex-col justify-center">
-              <span className={`block font-oswald uppercase tracking-tighter transition-all duration-500 font-bold leading-none
-                ${isScrolled ? "text-2xl text-stone-900" : "text-4xl md:text-5xl text-white"}`}>
-                DEM
-              </span>
-              <span className={`block font-oswald uppercase tracking-[0.4em] transition-all duration-500 font-light leading-none mt-1.5
-                ${isScrolled ? "text-[8px] bg-clip-text text-transparent bg-gradient-to-r from-[#A47C3B] to-[#CFA670]" : "text-[10px] md:text-[12px] text-white/80"}`}>
-                Properties
-              </span>
-            </div>
-          </Link>
 
           {/* ACTIONS */}
           <div className="flex items-center gap-8">
@@ -134,7 +104,7 @@ const Header: React.FC = () => {
 
               <button onClick={() => setIsMenuOpen(false)} className="group flex items-center gap-4 p-2">
                 <span className="font-oswald text-[10px] uppercase tracking-[0.5em] text-stone-500 group-hover:text-white transition-colors">Close</span>
-                <X className="w-10 h-10 text-[#CFA670] group-hover:rotate-90 transition-transform duration-500" />
+                <X className="w-10 h-10 text-[#a5694f] group-hover:rotate-90 transition-transform duration-500" />
               </button>
             </div>
 
@@ -145,17 +115,17 @@ const Header: React.FC = () => {
                     <Link
                       to={item.href}
                       onClick={() => setIsMenuOpen(false)}
-                      className="group relative inline-block font-oswald uppercase text-5xl md:text-7xl transition-all duration-500 hover:text-[#CFA670]"
+                      className="group relative inline-block font-oswald uppercase text-5xl md:text-7xl transition-all duration-500 hover:text-[#a5694f]"
                     >
                       {item.label}
-                      <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-[#CFA670] transition-all duration-500 group-hover:w-full" />
+                      <span className="absolute bottom-2 left-0 w-0 h-[1px] bg-[#a5694f] transition-all duration-500 group-hover:w-full" />
                     </Link>
                   </motion.li>
                 ))}
               </ul>
 
               <div className="mt-20 flex flex-col items-center gap-6">
-                <a href="tel:+34655623860" className="flex items-center gap-3 text-[#CFA670] font-oswald text-xl tracking-widest hover:text-white transition-colors">
+                <a href="tel:+34655623860" className="flex items-center gap-3 text-[#a5694f] font-oswald text-xl tracking-widest hover:text-white transition-colors">
                   <Phone size={20} /> +34 655 62 38 60
                 </a>
               </div>

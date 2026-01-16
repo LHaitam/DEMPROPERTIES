@@ -16,6 +16,7 @@ import WhatsAppButton from "./components/layout/WhatsAppButton";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import { PropertyErrorFallback } from "./components/properties/PropertyErrorFallback";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -57,6 +58,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
             {/* CORRECTION : L'ErrorBoundary doit envelopper l'élément à l'intérieur de la Route */}
             <Route

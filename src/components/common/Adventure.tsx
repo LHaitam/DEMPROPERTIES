@@ -79,7 +79,7 @@ const Adventure: React.FC = () => {
           "
           style={{
             backgroundImage:
-              "linear-gradient(90deg, #A47C3B 0%, #CFA670 50%, #8C6A30 100%)",
+              "linear-gradient(90deg, #A47C3B 0%, #a5694f 50%, #8C6A30 100%)",
           }}
         >
           {t("adventure.mainTitle")}
@@ -116,7 +116,7 @@ const Adventure: React.FC = () => {
             "
             style={{
               background:
-                "linear-gradient(90deg, #A47C3B 0%, #CFA670 50%, #8C6A30 100%)",
+                "linear-gradient(90deg, #A47C3B 0%, #a5694f 50%, #8C6A30 100%)",
             }}
           />
 

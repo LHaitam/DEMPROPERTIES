@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 export interface Property {
   cod_ofer: number;
-  id?: string; // Optionnel pour la compatibilité
+  id?: string;
   ref: string;
   nbtipo: string;
   poblacion: string;
@@ -17,8 +17,12 @@ export interface Property {
   m_cons: number;
   m_terraza?: number;
   vistasalmar?: number;
-  descrip?: string;      // Ajouté pour TypeScript
-  descripcion?: string;  // Ajouté pour TypeScript
+  descrip?: string;
+  descripcion?: string;
+  piscina_com?: number;
+  piscina_prop?: number;
+  parking?: number;
+  terraza?: number;
 }
 
 export const useProperties = (lang: string) => {
@@ -27,17 +31,36 @@ export const useProperties = (lang: string) => {
 
   const fetchProps = async () => {
     setLoading(true);
-    // Inmovilla lang mapping: es=1, fr=2, en=3 (ajustez selon votre API)
-    const langId = lang === 'es' ? '1' : lang === 'en' ? '3' : '2';
+    const langId = lang === 'es' ? '1' : '2';
+    
     try {
-      const response = await fetch(`https://lightslategrey-stork-838501.hostingersite.com/api/inmovilla/api_v1.php?action=list&lang=${langId}`);
+      const response = await fetch(
+        `https://lightslategrey-stork-838501.hostingersite.com/api/inmovilla/api_v1.php?action=list&lang=${langId}`
+      );
+
+      if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
       const data = await response.json();
-      if (data.paginacion && Array.isArray(data.paginacion)) {
-        // On retire le premier élément qui est souvent l'objet de pagination/meta
-        setProperties(data.paginacion.slice(1));
+      
+      if (data && data.paginacion && Array.isArray(data.paginacion)) {
+        const rawList = data.paginacion;
+
+        // LOGIQUE DE DÉTECTION : 
+        // Si le premier élément n'a pas de 'ref' ou de 'cod_ofer', c'est l'objet de pagination.
+        // Sinon, c'est déjà une propriété, on garde tout.
+        const firstItem = rawList[0];
+        const hasNoData = !firstItem.ref && !firstItem.cod_ofer;
+        
+        const finalData = hasNoData ? rawList.slice(1) : rawList;
+        
+        console.log("Propriétés filtrées pour le state:", finalData);
+        setProperties(finalData);
+      } else {
+        setProperties([]);
       }
     } catch (error) {
       console.error("Erreur API Liste:", error);
+      setProperties([]);
     } finally {
       setLoading(false);
     }

@@ -16,6 +16,17 @@ import Header from "@/components/layout/Header";
 
 const ITEMS_PER_PAGE = 9;
 
+// --- DÉFINITION DES TRANCHES DE PRIX (Correspondant à votre image) ---
+export const PRICE_RANGES = [
+  { label: "000.000 - 300.000 €", min: 0, max: 300000 },
+  { label: "300.000 - 500.000 €", min: 300000, max: 500000 },
+  { label: "500.000 - 750.000 €", min: 500000, max: 750000 },
+  { label: "750.000 - 1.000.000 €", min: 750000, max: 1000000 },
+  { label: "1.000.000 - 3.000.000 €", min: 1000000, max: 3000000 },
+  { label: "3.000.000 - 6.000.000 €", min: 3000000, max: 6000000 },
+  { label: "6.000.000 € +", min: 6000000, max: 999999999 },
+];
+
 const Properties: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { properties, loading } = useProperties(i18n.language);
@@ -32,6 +43,8 @@ const Properties: React.FC = () => {
     search: "",
     operation: "all",
     type: "all",
+    location: "all",
+    priceRange: "all", // Utilisation de la tranche au lieu de min/max individuels
     minPrice: 0,
     maxPrice: 50000000,
     beds: "all",
@@ -49,62 +62,94 @@ const Properties: React.FC = () => {
     setCurrentPage(1);
   }, [filters]);
 
-  const propertyTypes = useMemo(() => {
-    return Array.from(new Set(properties.map(p => (p as any).tipoinmo).filter(Boolean))) as string[];
+  // --- LOGIQUE DYNAMIQUE POUR LES DROPDOWNS (CORRIGÉE) ---
+
+  const locations = useMemo(() => {
+    const raw = properties.map(p => {
+      const prop = p as any;
+      return prop.ciudad || prop.poblacion || prop.zona || prop.municipio;
+    }).filter((val): val is string => Boolean(val));
+
+    return Array.from(new Set(raw)).sort();
   }, [properties]);
 
+  const propertyTypes = useMemo(() => {
+    const raw = properties.map(p => {
+      const prop = p as any;
+      return prop.nbtipo || prop.tipo;
+    }).filter((val): val is string => Boolean(val));
+
+    return Array.from(new Set(raw)).sort();
+  }, [properties]);
+
+  const bedOptions = useMemo(() => {
+    const raw = properties.map(p => {
+      const val = (p as any).total_hab || (p as any).habitaciones;
+      return val !== undefined && val !== "0" && val !== 0 ? String(val) : null;
+    }).filter((val): val is string => Boolean(val));
+
+    return Array.from(new Set(raw)).sort((a, b) => parseInt(a) - parseInt(b));
+  }, [properties]);
+
+  // --- LOGIQUE DE FILTRAGE AMÉLIORÉE ---
+
   const filteredProperties = useMemo(() => {
+    if (!properties || properties.length === 0) return [];
+
     return properties.filter(p => {
       const prop = p as any;
 
-      // 0. Ignorer l'objet de pagination (celui qui a la clé 'posicion')
-      if (prop.posicion) return false;
+      const propLocation = prop.ciudad || prop.poblacion || "";
+      const propType = prop.nbtipo || prop.tipo || "";
+      const propBeds = Number(prop.total_hab || prop.habitaciones || 0);
 
-      // 1. Recherche textuelle (Ville ou Réf)
-      // Dans ton JSON c'est 'ciudad' et 'ref'
+      // 1. Recherche (Texte libre)
       const matchSearch = !filters.search ||
-        (`${prop.ciudad} ${prop.ref}`).toLowerCase().includes(filters.search.toLowerCase());
+        (`${propLocation} ${prop.ref} ${propType}`).toLowerCase().includes(filters.search.toLowerCase());
 
-      // 2. Opération (Vente=1 / Location=2)
-      const matchOp = filters.operation === "all" || String(prop.keyacci) === String(filters.operation);
+      // 2. Localisation
+      const matchLocation = filters.location === "all" || propLocation === filters.location;
 
-      // 3. Type de bien (nbtipo dans ton JSON ex: "Apartamento")
-      const matchType = filters.type === "all" || prop.nbtipo === filters.type;
+      // 3. Type de bien
+      const matchType = filters.type === "all" || propType === filters.type;
 
-      // 4. Chambres (total_hab dans ton JSON)
-      const matchBeds = filters.beds === "all" || Number(prop.total_hab) >= Number(filters.beds);
+      // 4. Chambres
+      const matchBeds = filters.beds === "all" || propBeds >= Number(filters.beds);
 
-      // 5. Référence
+      // 5. Prix (Logique par tranches de l'image)
+      const isRental = String(prop.keyacci) === "2";
+      const price = isRental ? Number(prop.precioalq || 0) : Number(prop.precioinmo || 0);
+
+      let matchPrice = true;
+      if (filters.priceRange && filters.priceRange !== "all") {
+        const range = PRICE_RANGES.find(r => r.label === filters.priceRange);
+        if (range) {
+          matchPrice = price >= range.min && price <= range.max;
+        }
+      } else {
+        // Fallback sur le slider si utilisé
+        matchPrice = (price === 0 || price >= filters.minPrice) && (price === 0 || price <= filters.maxPrice);
+      }
+
+      // 6. Autres filtres
       const matchRef = !filters.ref || prop.ref?.toLowerCase().includes(filters.ref.toLowerCase());
-
-      // 6. Surfaces (m_cons dans ton JSON pour surface construite)
       const surface = Number(prop.m_cons) || 0;
       const matchMinSurf = !filters.minSurface || surface >= Number(filters.minSurface);
       const matchMaxSurf = !filters.maxSurface || surface <= Number(filters.maxSurface);
-
-      // 7. Caractéristiques (Inmovilla utilise souvent 1 pour Oui, 0 pour Non dans ce JSON)
       const matchPool = !filters.pool || (Number(prop.piscina_com) === 1 || Number(prop.piscina_prop) === 1);
       const matchParking = !filters.parking || Number(prop.parking) > 0;
       const matchSea = !filters.seaViews || Number(prop.vistasalmar) === 1;
       const matchTerrace = !filters.terrace || Number(prop.terraza) === 1;
 
-      // 8. Prix 
-      // Logic: precioinmo pour vente (keyacci 1), precioalq pour location (keyacci 2)
-      const isRental = String(prop.keyacci) === "2";
-      const price = isRental ? Number(prop.precioalq) : Number(prop.precioinmo);
-
-      // Sécurité : si le prix est 0 (prix sur demande), on décide généralement de l'afficher 
-      // sauf si l'utilisateur a mis un filtre de prix très strict
-      const matchMinPrice = price === 0 || price >= filters.minPrice;
-      const matchMaxPrice = price === 0 || price <= filters.maxPrice;
-
       return (
-        matchSearch && matchOp && matchType && matchBeds && matchRef &&
-        matchMinSurf && matchMaxSurf && matchPool && matchParking &&
-        matchSea && matchTerrace && matchMinPrice && matchMaxPrice
+        matchSearch && matchLocation && matchType && matchBeds && matchPrice &&
+        matchRef && matchMinSurf && matchMaxSurf && matchPool &&
+        matchParking && matchSea && matchTerrace
       );
     });
   }, [properties, filters]);
+
+  // --- PAGINATION ---
 
   const totalPages = Math.ceil(filteredProperties.length / ITEMS_PER_PAGE);
   const paginatedProperties = useMemo(() => {
@@ -129,11 +174,10 @@ const Properties: React.FC = () => {
         <meta
           name="description"
           content={isES
-            ? "Catálogo exclusivo de villas, apartamentos y propiedades off-market en Marbella. Encuentre su hogar ideal con nuestra asesoría experta."
-            : "Exclusive catalog of villas, apartments, and off-market properties in Marbella. Find your ideal home with our expert guidance."}
+            ? "Catálogo exclusivo de villas, apartamentos y propriétés off-market en Marbella."
+            : "Exclusive catalog of villas, apartments, and off-market properties in Marbella."}
         />
         <link rel="canonical" href="https://demproperties.es/properties" />
-        <meta property="og:title" content={isES ? "Propiedades en Marbella — DEM" : "Marbella Properties — DEM"} />
       </Helmet>
 
       <Header />
@@ -141,7 +185,13 @@ const Properties: React.FC = () => {
       <HeroProperties onExploreClick={scrollToGrid} onFiltersClick={scrollToFilters} />
 
       <div ref={filterRef} className="scroll-mt-20">
-        <PropertyFilters filters={filters} setFilters={setFilters} propertyTypes={propertyTypes} />
+        <PropertyFilters
+          filters={filters}
+          setFilters={setFilters}
+          propertyTypes={propertyTypes}
+          locations={locations}
+          bedOptions={bedOptions}
+        />
       </div>
 
       <section ref={gridRef} className="py-20 px-6 md:px-12 scroll-mt-24">
@@ -165,11 +215,20 @@ const Properties: React.FC = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <PropertiesGrid properties={paginatedProperties} onPreview={(p) => { setSelectedProperty(p); setIsPreviewOpen(true); }} />
+                  {filteredProperties.length > 0 ? (
+                    <PropertiesGrid
+                      properties={paginatedProperties}
+                      onPreview={(p) => { setSelectedProperty(p); setIsPreviewOpen(true); }}
+                    />
+                  ) : (
+                    <div className="text-center py-20 font-playfair italic text-stone-400">
+                      {t('filters.no_results') || "No properties match your criteria."}
+                    </div>
+                  )}
                 </motion.div>
               </AnimatePresence>
 
-              {/* PAGINATION */}
+              {/* PAGINATION UI */}
               {totalPages > 1 && (
                 <div className="mt-20 flex justify-center items-center gap-6">
                   <motion.button
@@ -189,9 +248,7 @@ const Properties: React.FC = () => {
                         <motion.button
                           key={pageNum}
                           onClick={() => handlePageChange(pageNum)}
-                          whileHover={{ y: -2 }}
-                          className={`relative w-12 h-12 font-oswald text-xs tracking-widest transition-colors ${currentPage === pageNum ? "text-white" : "text-stone-400 hover:text-stone-900"
-                            }`}
+                          className={`relative w-12 h-12 font-oswald text-xs tracking-widest transition-colors ${currentPage === pageNum ? "text-white" : "text-stone-400 hover:text-stone-900"}`}
                         >
                           <span className="relative z-10">{pageNum}</span>
                           {currentPage === pageNum && (

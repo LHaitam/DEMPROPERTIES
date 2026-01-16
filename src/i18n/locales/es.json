@@ -227,6 +227,10 @@
     }
   },
   "filters": {
+    "location_all": "CIUDAD / ZONA",
+    "type_all": "TODOS LOS TIPOS",
+    "beds_all": "DORM.",
+    "no_results": "No hay propiedades que coincidan con su búsqueda.",
     "advanced": "Filtros Avanzados",
     "simple": "Filtros Simples",
     "reference": "Referencia",
@@ -237,11 +241,7 @@
     "features": {
       "pool": "Piscina",
       "parking": "Parking",
-      "lift": "Ascensor",
       "terrace": "Terraza",
-      "furnished": "Amueblado",
-      "urbanization": "Urbanización",
-      "new_build": "Obra Nueva",
       "sea_views": "Vistas al mar"
     }
   },
@@ -305,5 +305,37 @@
     "property_not_found_title": "Propiedad no disponible",
     "property_not_found_text": "No pudimos cargar los detalles de esta propiedad. Es posible que ya se haya vendido o haya un error temporal de conexión.",
     "loading_properties": "Error al cargar el catálogo de propiedades. Por favor, inténtelo de nuevo."
+  },
+  "privacy": {
+    "hero": {
+      "tagline": "Movimientos Modernos. Valores Eternos.",
+      "title1": "Política de",
+      "title2": "Privacidad",
+      "quote": "En DEM Properties, nos tomamos su privacidad tan en serio como su hogar. Estamos comprometidos con la transparencia total en el manejo de sus datos personales.",
+      "scroll": "Desliza para explorar"
+    },
+    "sidebar": {
+      "updated": "Última Actualización",
+      "contactTitle": "Protección de Datos",
+      "contactDesc": "Si tiene preguntas o inquietudes sobre esta Política de Privacidad o sobre cómo manejamos sus datos personales, póngase en contacto con nuestro equipo."
+    },
+    "sections": {
+      "collect": {
+        "title": "Información que Recopilamos",
+        "content": "Recopilamos información personal que usted proporciona voluntariamente a través de nuestro formulario de contacto. Esto incluye nombre, apellido, teléfono, correo electrónico y su mensaje. También utilizamos herramientas de análisis para monitorear el comportamiento en la web y mejorar nuestra experiencia digital."
+      },
+      "use": {
+        "title": "Cómo Usamos su Información",
+        "content": "La información se utiliza para responder a sus consultas, proporcionar información relevante sobre nuestros servicios exclusivos y mejorar el rendimiento de nuestro sitio web. Nunca venderemos, alquilaremos ni compartiremos sus datos personales con terceros sin su consentimiento explícito."
+      },
+      "protect": {
+        "title": "Cómo Protegemos su Información",
+        "content": "Utilizamos medidas de seguridad estándar de la industria para proteger la información personal que proporciona. Estamos comprometidos a garantizar la máxima confidencialidad e integridad de sus datos en todo momento."
+      },
+      "rights": {
+        "title": "Sus Derechos",
+        "content": "Tiene derecho a acceder, corregir o eliminar sus datos personales en cualquier momento. También puede optar por no recibir nuestras comunicaciones haciendo clic en el enlace de baja en nuestros correos o contactándonos directamente en d.elmoutii@demproperties.es."
+      }
+    }
   }
 }

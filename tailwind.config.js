@@ -10,7 +10,7 @@ export default {
       colors: {
         cream: "#F9F7F2",
         sand: "#E6D2B5",
-        gold: "#CFA670",
+        gold: "#a5694f",
         terracotta: "#A47C3B",
         charcoal: "#1A1A1A",
       },
@@ -22,7 +22,7 @@ export default {
 
       backgroundImage: {
         "gold-gradient":
-          "linear-gradient(90deg,#A47C3B,#CFA670,#8C6A30)",
+          "linear-gradient(90deg,#A47C3B,#a5694f,#8C6A30)",
       },
     },
   },

@@ -37,7 +37,7 @@ const FeaturedProperties: React.FC = () => {
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-24"
         >
-          <span className="block font-oswald uppercase tracking-[0.45em] text-[#C5A059] text-[10px] mb-6">
+          <span className="block font-oswald uppercase tracking-[0.45em] text-[#a5694f] text-[10px] mb-6">
             {t("featured.eyebrow", "Sélection Exclusive")}
           </span>
 

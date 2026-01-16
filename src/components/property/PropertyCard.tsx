@@ -128,7 +128,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
 
         <button 
           onClick={(e) => { e.stopPropagation(); onPreview(property); }} 
-          className="absolute top-6 right-6 w-10 h-10 bg-white/90 flex items-center justify-center text-stone-900 hover:bg-[#C5A059] hover:text-white transition-all z-30"
+          className="absolute top-6 right-6 w-10 h-10 bg-white/90 flex items-center justify-center text-stone-900 hover:bg-[#a5694f] hover:text-white transition-all z-30"
         >
           <Maximize2 size={16} />
         </button>
@@ -146,7 +146,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
             </span>
           </div>
           <p className="font-playfair italic text-stone-400 text-sm flex items-center gap-2 uppercase tracking-wider truncate">
-            <span className="w-4 h-[1px] bg-[#C5A059]/40" />
+            <span className="w-4 h-[1px] bg-[#a5694f]/40" />
             {property.ciudad || property.poblacion}
           </p>
         </div>
@@ -163,7 +163,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
               {isRental ? 'INVERSIÓN' : t('property.price.label')}
             </span>
             {Number(displayPrice) === 0 ? (
-              <div className="flex items-center gap-2 text-[#C5A059] font-oswald text-[10px] uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-[#a5694f] font-oswald text-[10px] uppercase tracking-widest">
                 <PhoneCall size={12} /> {t('property.price.onRequest')}
               </div>
             ) : (
@@ -180,7 +180,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
           >
             <span className="relative pb-1">
               {t('property.actions.viewDetails')}
-              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-stone-100 group-hover/btn:bg-[#C5A059] transition-colors duration-500" />
+              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-stone-100 group-hover/btn:bg-[#a5694f] transition-colors duration-500" />
             </span>
             <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
@@ -192,7 +192,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, onPreview }) => {
 
 const SpecItem = ({ icon, value, label }: { icon: React.ReactNode; value: any; label: string }) => (
   <div className="flex flex-col items-center flex-1">
-    <div className="text-[#C5A059]/70 mb-1.5">{icon}</div>
+    <div className="text-[#a5694f]/70 mb-1.5">{icon}</div>
     <span className="font-playfair text-base text-stone-800 font-medium">{value && value !== "0" ? value : "-"}</span>
     <span className="font-oswald text-[7px] uppercase tracking-[0.15em] text-stone-300 mt-1">{label}</span>
   </div>

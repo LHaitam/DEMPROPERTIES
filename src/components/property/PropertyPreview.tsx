@@ -96,7 +96,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
         {/* Bouton Fermer */}
         <button 
           onClick={onClose} 
-          className="absolute top-4 right-4 z-[110] p-2 bg-white/10 backdrop-blur-md text-white md:text-stone-900 md:bg-white hover:bg-[#C5A059] hover:text-white transition-all rounded-full"
+          className="absolute top-4 right-4 z-[110] p-2 bg-white/10 backdrop-blur-md text-white md:text-stone-900 md:bg-white hover:bg-[#a5694f] hover:text-white transition-all rounded-full"
         >
           <X size={20} />
         </button>
@@ -105,7 +105,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
         <div className="relative lg:col-span-7 h-[35vh] md:h-[45vh] lg:h-[80vh] bg-[#f7f7f7] overflow-hidden">
           {extraData.loading ? (
             <div className="w-full h-full bg-stone-100 animate-pulse flex items-center justify-center">
-              <div className="w-12 h-[1px] bg-[#C5A059]/30" />
+              <div className="w-12 h-[1px] bg-[#a5694f]/30" />
             </div>
           ) : hasImages ? (
             <AnimatePresence mode="wait">
@@ -120,7 +120,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
             </AnimatePresence>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-[#f7f7f7]">
-              <span className="font-playfair italic text-6xl tracking-[0.2em] text-[#C5A059] opacity-30 select-none">
+              <span className="font-playfair italic text-6xl tracking-[0.2em] text-[#a5694f] opacity-30 select-none">
                 DEM
               </span>
             </div>
@@ -150,7 +150,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
           <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
             <div className="space-y-6">
               <div className="space-y-2">
-                <span className="font-oswald text-[9px] text-[#C5A059] uppercase tracking-[0.3em]">
+                <span className="font-oswald text-[9px] text-[#a5694f] uppercase tracking-[0.3em]">
                   {t('property.ref')} {property.ref}
                 </span>
                 <h2 className="font-oswald text-2xl uppercase tracking-tight text-stone-900 leading-tight">
@@ -208,7 +208,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
 
             <button 
               onClick={() => navigate(`/properties/${property.cod_ofer}`)}
-              className="w-full flex items-center justify-center gap-4 bg-stone-900 text-white py-5 font-oswald text-[10px] uppercase tracking-[0.3em] hover:bg-[#C5A059] transition-all group"
+              className="w-full flex items-center justify-center gap-4 bg-stone-900 text-white py-5 font-oswald text-[10px] uppercase tracking-[0.3em] hover:bg-[#a5694f] transition-all group"
             >
               {t('property.actions.viewDetails')} 
               <ArrowRight size={16} className="group-hover:translate-x-2 transition-transform" />
@@ -222,7 +222,7 @@ export const PropertyPreview: React.FC<PropertyPreviewProps> = ({ property, isOp
 
 const SpecItemDetail = ({ icon, value, label }: { icon: React.ReactNode; value: any; label: string }) => (
   <div className="flex flex-col items-center text-center">
-    <div className="text-[#C5A059] mb-1.5">{icon}</div>
+    <div className="text-[#a5694f] mb-1.5">{icon}</div>
     <span className="font-playfair text-base text-stone-800 font-medium">{value && value !== "0" ? value : "-"}</span>
     <span className="font-oswald text-[7px] uppercase tracking-[0.1em] text-stone-300 mt-1">{label}</span>
   </div>

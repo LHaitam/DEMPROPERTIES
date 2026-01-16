@@ -228,6 +228,10 @@
     }
   },
   "filters": {
+    "location_all": "CITY / AREA",
+    "type_all": "ALL TYPES",
+    "beds_all": "BEDS",
+    "no_results": "No properties match your criteria.",
     "advanced": "Advanced Filters",
     "simple": "Simple Filters",
     "reference": "Reference",
@@ -238,11 +242,7 @@
     "features": {
       "pool": "Pool",
       "parking": "Parking",
-      "lift": "Lift",
       "terrace": "Terrace",
-      "furnished": "Furnished",
-      "urbanization": "Urbanization",
-      "new_build": "New Build",
       "sea_views": "Sea Views"
     }
   },
@@ -306,5 +306,37 @@
     "property_not_found_title": "Property Currently Unavailable",
     "property_not_found_text": "We couldn't load the details for this property. It might have been sold or there's a temporary connection issue.",
     "loading_properties": "Error loading the property list. Please try again."
+  },
+  "privacy": {
+    "hero": {
+      "tagline": "Modern Moves. Timeless Value.",
+      "title1": "Privacy",
+      "title2": "Policy",
+      "quote": "At DEM Properties, we take your privacy as seriously as your home. We are committed to absolute transparency in how we handle your personal data.",
+      "scroll": "Scroll to explore"
+    },
+    "sidebar": {
+      "updated": "Last Updated",
+      "contactTitle": "Data Protection",
+      "contactDesc": "If you have questions or concerns about this Privacy Policy or how we handle your personal data, please reach out to our team."
+    },
+    "sections": {
+      "collect": {
+        "title": "Information We Collect",
+        "content": "We collect personal information that you voluntarily provide through our website’s contact form. This may include First Name, Last Name, Phone Number, Email Address, and your specific message. Additionally, we use analytics tools to monitor website behavior to enhance our digital experience."
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "content": "The information is used to respond to your inquiries, provide relevant information about our exclusive services, and improve the performance of our website. We will never sell, rent, or share your personal data with third parties for marketing purposes without your explicit consent."
+      },
+      "protect": {
+        "title": "How We Protect Your Information",
+        "content": "We use industry-standard security measures to protect the personal information you provide. While no digital platform can guarantee total security, we are committed to ensuring the maximum confidentiality and integrity of your data."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "content": "You have the right to access, correct, or delete your personal data at any time. You may also opt out of receiving communications from us by clicking the unsubscribe link in our emails or by contacting us directly at d.elmoutii@demproperties.es."
+      }
+    }
   }
 }

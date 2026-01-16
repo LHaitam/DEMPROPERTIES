@@ -36,7 +36,7 @@ const Statement: React.FC = () => {
               {/* GOLD MARK */}
               <div className="relative w-10 h-10 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border border-gold/40 blur-sm" />
-                <div className="w-2.5 h-2.5 bg-gold rotate-45 shadow-[0_0_12px_#CFA670aa]" />
+                <div className="w-2.5 h-2.5 bg-gold rotate-45 shadow-[0_0_12px_#a5694faa]" />
               </div>
             </React.Fragment>
           ))}
@@ -50,8 +50,8 @@ const Statement: React.FC = () => {
         }
 
         .stroke-text:hover {
-          -webkit-text-stroke: 1px #CFA670;
-          color: #CFA670;
+          -webkit-text-stroke: 1px #a5694f;
+          color: #a5694f;
           text-shadow: 0 0 20px rgba(207, 166, 112, 0.25);
         }
 

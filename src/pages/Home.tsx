@@ -30,7 +30,7 @@ const Home: React.FC = () => {
           <h1
             className="font-oswald text-3xl md:text-4xl uppercase tracking-[0.35em]"
             style={{
-              color: "#CFA670",
+              color: "#a5694f",
               textShadow: "0 0 14px rgba(207,166,112,0.45)",
             }}
           >

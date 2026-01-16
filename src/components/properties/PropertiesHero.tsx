@@ -45,7 +45,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
           className="
             absolute bottom-[-10%] left-[-10%]
             w-[65vw] h-[60vh]
-            bg-[#C5A059]/10
+            bg-[#a5694f]/10
             rounded-tr-[14rem]
             blur-2xl md:blur-3xl
           "
@@ -113,7 +113,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
                 text-transparent bg-clip-text
                 leading-[0.85]
                 text-[clamp(72px,11vw,180px)]
-                bg-gradient-to-r from-[#8A6930] via-[#CFA670] to-[#6F5327]
+bg-gradient-to-r from-[#9B7440] via-[#a5694f] to-[#7A4F2A]
                 lg:ml-[20vw]
               "
             >
@@ -134,7 +134,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
               className="
                 font-playfair text-xl md:text-2xl
                 text-stone-800/80 leading-relaxed italic
-                border-l-2 border-[#C5A059] pl-6
+                border-l-2 border-[#a5694f] pl-6
               "
             >
               {t('hero.subtitle')}
@@ -173,7 +173,7 @@ export const HeroProperties: React.FC<HeroPropertiesProps> = ({
                   "
                   style={{
                     background:
-                      "linear-gradient(90deg,#A47C3B,#CFA670,#8C6A30)",
+                      "linear-gradient(90deg,#A47C3B,#a5694f,#8C6A30)",
                   }}
                 />
               </button>

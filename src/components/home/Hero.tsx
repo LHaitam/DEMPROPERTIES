@@ -39,13 +39,13 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute top-[-10%] right-[-10%] w-[60vw] h-[75vh] bg-[#CFA670]/18 rounded-bl-[12rem] blur-2xl md:blur-3xl"
+          className="absolute top-[-10%] right-[-10%] w-[60vw] h-[75vh] bg-[#a5694f]/18 rounded-bl-[12rem] blur-2xl md:blur-3xl"
         />
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 2.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute bottom-[-10%] left-[-10%] w-[65vw] h-[60vh] bg-[#C5A059]/14 rounded-tr-[14rem] blur-2xl md:blur-3xl"
+          className="absolute bottom-[-10%] left-[-10%] w-[65vw] h-[60vh] bg-[#a5694f]/14 rounded-tr-[14rem] blur-2xl md:blur-3xl"
         />
       </div>
 
@@ -66,7 +66,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 80 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.1, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="font-oswald font-bold uppercase tracking-tighter text-transparent bg-clip-text leading-[0.85] text-[clamp(60px,11vw,180px)] bg-gradient-to-r from-[#8A6930] via-[#CFA670] to-[#6F5327] lg:pl-[20vw] drop-shadow-[0_25px_60px_rgba(0,0,0,0.35)]"
+              className="font-oswald font-bold uppercase tracking-tighter text-transparent bg-clip-text leading-[0.85] text-[clamp(60px,11vw,180px)] bg-gradient-to-r from-[#8A6930] via-[#a5694f] to-[#6F5327] lg:pl-[20vw] drop-shadow-[0_25px_60px_rgba(0,0,0,0.35)]"
             >
               {t("hero.brand")}
             </motion.h1>
@@ -77,7 +77,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="font-playfair text-xl md:text-2xl text-white/80 leading-relaxed italic border-l-2 border-[#C5A059]/60 pl-6"
+              className="font-playfair text-xl md:text-2xl text-white/80 leading-relaxed italic border-l-2 border-[#a5694f]/60 pl-6"
             >
               {t("hero.subtitle")}
             </motion.p>
@@ -90,12 +90,12 @@ const Hero: React.FC = () => {
             >
               <button
                 onClick={() => (window.location.href = "/properties")}
-                className="group relative px-8 py-4 bg-white/10 backdrop-blur-md text-white font-oswald uppercase tracking-widest overflow-hidden border border-white/15 hover:border-[#C5A059]/60 transition-colors"
+                className="group relative px-8 py-4 bg-white/10 backdrop-blur-md text-white font-oswald uppercase tracking-widest overflow-hidden border border-white/15 hover:border-[#a5694f]/60 transition-colors"
               >
                 <span className="relative z-10 flex items-center gap-3 group-hover:gap-5 transition-all">
                   {t("hero.ctaProperties")} <ArrowRight className="w-4 h-4" />
                 </span>
-                <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left bg-gradient-to-r from-[#A47C3B] via-[#CFA670] to-[#8C6A30] opacity-55" />
+                <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left bg-gradient-to-r from-[#A47C3B] via-[#a5694f] to-[#8C6A30] opacity-55" />
               </button>
 
               <button

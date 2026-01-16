@@ -89,14 +89,14 @@ const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-12">
         {specGroups.map((group, idx) => (
           <motion.div key={idx} variants={itemVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="space-y-6">
-            <h4 className="font-oswald text-[11px] uppercase tracking-[0.3em] text-[#C5A059] border-b border-stone-100 pb-3 font-bold">
+            <h4 className="font-oswald text-[11px] uppercase tracking-[0.3em] text-[#a5694f] border-b border-stone-100 pb-3 font-bold">
               {group.title}
             </h4>
             <ul className="space-y-4">
               {group.items.map((item, i) => (
                 <li key={i} className="flex justify-between items-center text-sm border-b border-stone-50 pb-2 transition-colors group">
                   <div className="flex items-center gap-3 text-stone-400 group-hover:text-stone-600 transition-colors">
-                    <span className="text-[#C5A059]/60">{item.icon}</span>
+                    <span className="text-[#a5694f]/60">{item.icon}</span>
                     <span className="font-oswald text-[10px] uppercase tracking-widest">{item.label}</span>
                   </div>
                   <span className="font-medium text-stone-900">{item.value || "-"}</span>
@@ -109,7 +109,7 @@ const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
 
       {/* Grid des Checkboxes (Amenities) */}
       <section className="space-y-10">
-        <h4 className="font-oswald text-[11px] uppercase tracking-[0.3em] text-stone-900 font-bold border-l-4 border-[#C5A059] pl-4">
+        <h4 className="font-oswald text-[11px] uppercase tracking-[0.3em] text-stone-900 font-bold border-l-4 border-[#a5694f] pl-4">
           {t('property.amenitiesTitle')}
         </h4>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-6 gap-x-8">
@@ -117,7 +117,7 @@ const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
             const isAvailable = checkAmenity(property[item.key]);
             return (
               <div key={index} className={`flex items-center gap-3 transition-all duration-500 ${isAvailable ? 'opacity-100' : 'opacity-20 grayscale'}`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${isAvailable ? 'bg-[#C5A059] border-[#C5A059]' : 'border-stone-200'}`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-colors ${isAvailable ? 'bg-[#a5694f] border-[#a5694f]' : 'border-stone-200'}`}>
                   {isAvailable && <Check size={12} className="text-white" />}
                 </div>
                 <span className={`font-oswald text-[10px] uppercase tracking-widest ${isAvailable ? 'text-stone-800 font-medium' : 'text-stone-400'}`}>
@@ -133,7 +133,7 @@ const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
       <motion.div variants={itemVariants} initial="hidden" whileInView="visible" className="bg-stone-50 p-8 rounded-sm border border-stone-100 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-white rounded-full shadow-sm">
-            <Zap size={20} className="text-[#C5A059]" />
+            <Zap size={20} className="text-[#a5694f]" />
           </div>
           <div>
             <h5 className="font-oswald text-[10px] uppercase tracking-widest text-stone-400">{t('propertyDetail.energyCert')}</h5>
@@ -142,7 +142,7 @@ const PropertySpecs: React.FC<PropertySpecsProps> = ({ property }) => {
         </div>
         <div className="flex gap-2">
           {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map((letra) => (
-            <div key={letra} className={`w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-sm transition-all ${property.energialetra?.toUpperCase() === letra ? 'bg-stone-900 text-white scale-110 shadow-md ring-2 ring-[#C5A059]' : 'bg-white text-stone-300'}`}>
+            <div key={letra} className={`w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-sm transition-all ${property.energialetra?.toUpperCase() === letra ? 'bg-stone-900 text-white scale-110 shadow-md ring-2 ring-[#a5694f]' : 'bg-white text-stone-300'}`}>
               {letra}
             </div>
           ))}

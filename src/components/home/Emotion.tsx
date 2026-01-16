@@ -124,7 +124,7 @@ const Emotion: React.FC = () => {
               absolute right-20 top-20
               w-2 h-2
               bg-gold rounded-full
-              shadow-[0_0_10px_#CFA670]
+              shadow-[0_0_10px_#a5694f]
             "
             aria-hidden="true"
           />

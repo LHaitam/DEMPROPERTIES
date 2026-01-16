@@ -99,10 +99,10 @@ const PropertyGallery: React.FC<PropertyGalleryProps> = ({ property }) => {
 
         {images.length > 1 && (
           <div className="hidden md:block">
-            <button ref={prevRef} className="absolute left-6 top-1/2 -translate-y-1/2 z-[10] w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#C5A059] opacity-0 group-hover:opacity-100 transition-all">
+            <button ref={prevRef} className="absolute left-6 top-1/2 -translate-y-1/2 z-[10] w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#a5694f] opacity-0 group-hover:opacity-100 transition-all">
               <ChevronLeft size={20} />
             </button>
-            <button ref={nextRef} className="absolute right-6 top-1/2 -translate-y-1/2 z-[10] w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#C5A059] opacity-0 group-hover:opacity-100 transition-all">
+            <button ref={nextRef} className="absolute right-6 top-1/2 -translate-y-1/2 z-[10] w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#a5694f] opacity-0 group-hover:opacity-100 transition-all">
               <ChevronRight size={20} />
             </button>
           </div>
@@ -110,7 +110,7 @@ const PropertyGallery: React.FC<PropertyGalleryProps> = ({ property }) => {
 
         <button
           onClick={() => setIsFullscreen(true)}
-          className="absolute bottom-6 right-6 z-[10] w-11 h-11 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#C5A059] transition-all"
+          className="absolute bottom-6 right-6 z-[10] w-11 h-11 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-[#a5694f] transition-all"
         >
           <Maximize2 size={18} />
         </button>
@@ -131,7 +131,7 @@ const PropertyGallery: React.FC<PropertyGalleryProps> = ({ property }) => {
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="relative z-[130] w-full h-full flex items-center justify-center px-6 md:px-12 pointer-events-none">
               <div className="w-full max-w-6xl relative pointer-events-auto">
                 
-                <button onClick={() => setIsFullscreen(false)} className="absolute -top-16 right-0 w-12 h-12 rounded-full bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-[#C5A059] transition-all">
+                <button onClick={() => setIsFullscreen(false)} className="absolute -top-16 right-0 w-12 h-12 rounded-full bg-white/10 border border-white/15 text-white flex items-center justify-center hover:bg-[#a5694f] transition-all">
                   <X size={20} />
                 </button>
 
@@ -147,10 +147,10 @@ const PropertyGallery: React.FC<PropertyGalleryProps> = ({ property }) => {
 
                 {images.length > 1 && (
                   <>
-                    <button ref={fsPrevRef} className="absolute -left-4 md:-left-20 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-[#C5A059] transition-all">
+                    <button ref={fsPrevRef} className="absolute -left-4 md:-left-20 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-[#a5694f] transition-all">
                       <ChevronLeft size={24} />
                     </button>
-                    <button ref={fsNextRef} className="absolute -right-4 md:-right-20 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-[#C5A059] transition-all">
+                    <button ref={fsNextRef} className="absolute -right-4 md:-right-20 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/5 border border-white/10 text-white flex items-center justify-center hover:bg-[#a5694f] transition-all">
                       <ChevronRight size={24} />
                     </button>
                   </>
