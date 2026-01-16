@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             <div className="flex gap-5 text-stone-500">
               <a href="https://www.instagram.com/dounia_elmoutii_properties_?igsh=dWtudnlreHlqYXdh" className="hover:text-[#CFA670] transition-colors"><Instagram size={20} /></a>
               <a href="https://www.linkedin.com/in/dounia-el-moutii-0423b79b/" className="hover:text-[#CFA670] transition-colors"><Linkedin size={20} /></a>
-              <a href="mailto:info@demproperties.com" className="hover:text-[#CFA670] transition-colors"><Mail size={20} /></a>
+              <a href="mailto:d.elmoutii@demproperties.es" className="hover:text-[#CFA670] transition-colors"><Mail size={20} /></a>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ const Footer: React.FC = () => {
             <div className="font-serif text-stone-300 space-y-2">
               <p className="text-lg italic">Marbella, Costa del Sol</p>
               <p className="text-stone-500 not-italic text-sm tracking-wide">+34 655 62 38 60</p>
-              <p className="text-stone-500 not-italic text-sm tracking-wide">info@demproperties.com</p>
+              <p className="text-stone-500 not-italic text-sm tracking-wide">d.elmoutii@demproperties.es</p>
             </div>
           </div>
         </div>

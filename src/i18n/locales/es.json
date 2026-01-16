@@ -277,6 +277,11 @@
       "submit": "Enviar consulta",
       "success": "Gracias por su consulta. Nos pondremos en contacto con usted en breve.",
       "error": "Ha ocurrido un error. Por favor, inténtelo de nuevo."
+    },
+    "success": {
+      "title": "Mensaje enviado con éxito",
+      "text": "Gracias por contactar con DEM Properties. Nuestro equipo revisará su solicitud y se pondrá en contacto con usted lo antes posible.",
+      "back": "Volver"
     }
   },
   "footer": {

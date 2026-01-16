@@ -55,6 +55,7 @@ const PropertyDetails: React.FC = () => {
         const res = await fetch(url);
         const result = await res.json();
         
+        // À l'intérieur du useEffect de PropertyDetails.tsx
         if (result?.ficha?.[1]) {
           const ficha = result.ficha[1];
           const descData = result.descripciones?.[id];
@@ -68,7 +69,10 @@ const PropertyDetails: React.FC = () => {
             fotos_list: result.fotos?.[id] || [],
             zona: ficha.zona || "",
             nbtipo: ficha.nbtipo || "Residence",
-            ciudad: ficha.ciudad || ""
+            ciudad: ficha.ciudad || "",
+            // AJOUTE CES DEUX LIGNES ICI :
+            lat: ficha.latitud, 
+            lng: ficha.altitud  
           });
         }
       } catch (err) {

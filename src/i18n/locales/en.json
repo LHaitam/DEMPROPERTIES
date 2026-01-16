@@ -278,6 +278,11 @@
       "submit": "Send enquiry",
       "success": "Thank you for your enquiry. We will contact you shortly.",
       "error": "An error occurred. Please try again."
+    },
+    "success": {
+      "title": "Message sent successfully",
+      "text": "Thank you for contacting DEM Properties. Our team will review your request and get back to you as soon as possible.",
+      "back": "Back"
     }
   },
   "footer": {
