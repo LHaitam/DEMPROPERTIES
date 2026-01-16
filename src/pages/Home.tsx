@@ -7,6 +7,7 @@ import Emotion from "@/components/home/Emotion";
 import FeaturedProperties from "@/components/home/FeaturedProperties";
 import WhyUs from "@/components/home/WhyUs";
 import Adventure from "@/components/common/Adventure";
+import Header from "@/components/layout/Header";
 
 const Home: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -113,6 +114,7 @@ const Home: React.FC = () => {
   ------------------------------------------- */
   return (
     <main className="w-full overflow-hidden">
+      <Header />
       <Hero />
       <Statement />
       <Emotion />

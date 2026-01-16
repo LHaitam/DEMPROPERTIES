@@ -9,7 +9,7 @@
     "loading": "Una experiencia inmobiliaria cuidada"
   },
   "hero": {
-    "brand": "Propiedades",
+    "brand": "Properties",
     "subtitle": "Propiedades cuidadosamente seleccionadas en Marbella, con un enfoque basado en la discreción, la arquitectura y la ubicación.",
     "ctaProperties": "Ver Propiedades",
     "ctaContact": "Contacto Privado",
@@ -176,6 +176,12 @@
     "imageFallback": "Imagen no disponible",
     "preview": {
       "fallback_desc": "Explore esta propiedad exclusiva seleccionada por nuestra agencia."
+    },
+    "gallery": {
+      "photos": "Fotos",
+      "default_title": "Residencia Exclusiva",
+      "esc_to_close": "Presione ESC para cerrar",
+      "exclusive_label": "Selección Exclusiva"
     }
   },
   "propertyPreview": {
@@ -208,6 +214,16 @@
       "name": "Nombre",
       "email": "Email",
       "message": "Mensaje"
+    },
+    "tabs": {
+      "description": "Descripción",
+      "details": "Detalles",
+      "location": "Ubicación"
+    },
+    "sections": {
+      "admin": "Administración",
+      "technical": "Detalles Técnicos",
+      "features": "Características y Calidades"
     }
   },
   "filters": {
@@ -257,9 +273,19 @@
         "phone": "Teléfono",
         "message": "Mensaje"
       },
+      "defaultMessage": "Hola, me gustaría recibir más información sobre la propiedad REF: {{ref}} con precio {{price}}.",
       "submit": "Enviar consulta",
       "success": "Gracias por su consulta. Nos pondremos en contacto con usted en breve.",
       "error": "Ha ocurrido un error. Por favor, inténtelo de nuevo."
     }
+  },
+  "footer": {
+    "vision": "Propiedades excepcionales. Asesoramiento a medida. Una experiencia inmobiliaria discreta en Marbella.",
+    "menu": {
+      "title": "Navegación"
+    },
+    "rights": "Todos los derechos reservados.",
+    "legal": "Aviso Legal",
+    "privacy": "Política de Privacidad"
   }
 }

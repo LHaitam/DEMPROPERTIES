@@ -11,6 +11,7 @@ import type { FilterState } from "@/components/properties/PropertiesFilters";
 import { PropertyPreview } from "@/components/property/PropertyPreview";
 import { useProperties } from "@/hooks/useProperties";
 import type { Property } from "@/hooks/useProperties";
+import Header from "@/components/layout/Header";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -86,6 +87,7 @@ const Properties: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Header />
       <HeroProperties onExploreClick={scrollToGrid} onFiltersClick={scrollToFilters} />
 
       <div ref={filterRef} className="scroll-mt-20">

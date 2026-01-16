@@ -8,6 +8,7 @@ import WhyUs from "@/components/home/WhyUs";
 import LocalExpertise from "@/components/about/LocalExpertise";
 import BrandSignature from "@/components/about/BrandSignature";
 import Adventure from "@/components/common/Adventure";
+import Header from "@/components/layout/Header";
 
 export default function About() {
   const { t, i18n } = useTranslation();
@@ -80,6 +81,8 @@ export default function About() {
 
   return (
     <div className="relative min-h-screen w-full bg-cream text-charcoal overflow-hidden">
+      <Header />
+
       {/* GLOBAL TADELAKT TEXTURE */}
       <div className="fixed inset-0 z-0 opacity-[0.12] pointer-events-none mix-blend-soft-light" />
 

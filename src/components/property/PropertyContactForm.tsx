@@ -1,173 +1,89 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, Loader2 } from "lucide-react";
 
 interface PropertyContactFormProps {
-  propertyRef?: string;
-  propertyPrice?: string | number;
+  propertyRef: string;
+  propertyPrice: string;
+  defaultMessage: string;
 }
 
-const PropertyContactForm: React.FC<PropertyContactFormProps> = ({ propertyRef, propertyPrice }) => {
+const PropertyContactForm: React.FC<PropertyContactFormProps> = ({ propertyRef, propertyPrice, defaultMessage }) => {
   const { t } = useTranslation();
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: ""
-  });
+  const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setMessage(defaultMessage);
+  }, [defaultMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Envoi du lead pour:", propertyRef, formData);
-    setIsSubmitted(true);
+    setStatus("loading");
+    
+    const formData = new FormData(formRef.current!);
+    const payload = {
+      nombre: formData.get("user_name"),
+      email: formData.get("user_email"),
+      mensaje: message,
+      ref: propertyRef,
+    };
+
+    try {
+      await fetch("https://lightslategrey-stork-838501.hostingersite.com/api/inmovilla/lead.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      setStatus("success");
+    } catch (err) {
+      setStatus("idle"); // Simplifié pour le widget produit
+    }
   };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Fonction pour nettoyer le prix venant de l'API (ex: "1.500.000" -> 1500000)
-  const getValidPrice = (price: string | number | undefined) => {
-    if (!price) return 0;
-    if (typeof price === 'number') return price;
-    // Supprime tout ce qui n'est pas un chiffre
-    const cleaned = price.replace(/\D/g, "");
-    return parseInt(cleaned, 10) || 0;
-  };
-
-  const numericPrice = getValidPrice(propertyPrice);
-
-  // Formatage du prix pour l'affichage discret
-  const displayPrice = numericPrice > 0 
-    ? `${numericPrice.toLocaleString()} €` 
-    : t('property.priceOnRequest', 'P.O.R.');
 
   return (
-    <div className="relative min-h-[400px]">
+    <div className="relative bg-white p-1">
       <AnimatePresence mode="wait">
-        {!isSubmitted ? (
-          <motion.form
-            key="contact-form"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-5"
-            onSubmit={handleSubmit}
-          >
-            {/* NAME */}
-            <div className="group">
-              <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1 group-focus-within:text-[#C5A059] transition-colors">
-                {t('contact.form.fields.name')}
-              </label>
-              <input 
-                type="text" 
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full bg-transparent border-b border-stone-200 py-2 text-sm focus:border-[#C5A059] transition-all outline-none font-light" 
-                placeholder={t('contact.form.placeholders.name', 'Full Name')}
-              />
+        {status !== "success" ? (
+          <motion.form key="f-prop" ref={formRef} onSubmit={handleSubmit} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+            <div className="space-y-4">
+              <div className="group">
+                <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1">{t('contact.form.fields.name')}</label>
+                <input name="user_name" type="text" required className="w-full bg-transparent border-b border-stone-200 py-2 text-sm outline-none focus:border-[#C5A059] transition-all font-light" />
+              </div>
+
+              <div className="group">
+                <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1">{t('contact.form.fields.email')}</label>
+                <input name="user_email" type="email" required className="w-full bg-transparent border-b border-stone-200 py-2 text-sm outline-none focus:border-[#C5A059] transition-all font-light" />
+              </div>
+
+              <div className="group">
+                <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1">{t('contact.form.fields.message')}</label>
+                <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={3} required className="w-full bg-transparent border-b border-stone-200 py-2 text-sm outline-none focus:border-[#C5A059] transition-all resize-none font-light" />
+              </div>
             </div>
 
-            {/* EMAIL */}
-            <div className="group">
-              <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1 group-focus-within:text-[#C5A059] transition-colors">
-                {t('contact.form.fields.email')}
-              </label>
-              <input 
-                type="email" 
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full bg-transparent border-b border-stone-200 py-2 text-sm focus:border-[#C5A059] transition-all outline-none font-light" 
-                placeholder="email@luxury.com"
-              />
-            </div>
+            <button type="submit" disabled={status === "loading"} className="w-full bg-stone-900 text-white font-oswald uppercase tracking-[0.4em] text-[9px] py-4 mt-2 hover:bg-[#C5A059] transition-all flex justify-center items-center">
+              {status === "loading" ? <Loader2 className="animate-spin" size={14} /> : t('contact.form.submit')}
+            </button>
 
-            {/* PHONE */}
-            <div className="group">
-              <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1 group-focus-within:text-[#C5A059] transition-colors">
-                {t('contact.form.fields.phone')}
-              </label>
-              <input 
-                type="tel" 
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full bg-transparent border-b border-stone-200 py-2 text-sm focus:border-[#C5A059] transition-all outline-none font-light" 
-                placeholder="+34 --- --- ---"
-              />
-            </div>
-
-            {/* MESSAGE */}
-            <div className="group">
-              <label className="block font-oswald text-[8px] uppercase tracking-[0.3em] text-stone-400 mb-1 group-focus-within:text-[#C5A059] transition-colors">
-                {t('contact.form.fields.message')}
-              </label>
-              <textarea 
-                name="message"
-                rows={3}
-                required
-                value={formData.message}
-                onChange={handleChange}
-                className="w-full bg-transparent border-b border-stone-200 py-2 text-sm focus:border-[#C5A059] transition-all outline-none resize-none font-light" 
-                placeholder={t('propertyPreview.explore')}
-              />
-            </div>
-
-            <motion.button 
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="w-full bg-stone-900 text-white font-oswald uppercase tracking-[0.4em] text-[9px] py-4 mt-6 transition-all hover:bg-[#C5A059]"
-            >
-              {t('contact.form.submit')}
-            </motion.button>
-
-            <div className="pt-4 text-center">
-              <p className="text-[7px] text-stone-300 uppercase tracking-widest italic">
-                {t('property.ref', 'Ref')}: {propertyRef} — {displayPrice}
-              </p>
+            <div className="pt-6 mt-4 border-t border-stone-50 text-center">
+               <div className="flex flex-col gap-1">
+                 <span className="text-[9px] font-oswald text-stone-900 uppercase tracking-[0.2em]">REF: {propertyRef}</span>
+                 <span className="text-[8px] text-[#C5A059] uppercase tracking-widest italic font-medium">{propertyPrice}</span>
+               </div>
             </div>
           </motion.form>
         ) : (
-          /* MESSAGE DE SUCCÈS */
-          <motion.div
-            key="success-message"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="h-full flex flex-col items-center justify-center text-center py-10 space-y-6"
-          >
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", damping: 12, stiffness: 200, delay: 0.2 }}
-              className="w-16 h-16 rounded-full border border-[#C5A059] flex items-center justify-center text-[#C5A059]"
-            >
-              <Check size={30} strokeWidth={1.5} />
-            </motion.div>
-
-            <div className="space-y-2">
-              <h3 className="font-playfair italic text-2xl text-stone-900">
-                {t('contact.success.title', 'Thank You')}
-              </h3>
-              <p className="text-stone-500 font-light text-sm leading-relaxed max-w-[240px]">
-                {t('contact.success.message', 'Your enquiry has been received.')}
-                <br />
-                <span className="text-stone-900 font-medium text-[10px] uppercase tracking-wider mt-2 block">
-                   Ref: {propertyRef}
-                </span>
-              </p>
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-8 space-y-4">
+            <div className="w-12 h-12 rounded-full border border-[#C5A059] flex items-center justify-center text-[#C5A059] mx-auto">
+              <Check size={24} />
             </div>
-
-            <button 
-              onClick={() => setIsSubmitted(false)}
-              className="flex items-center gap-2 font-oswald text-[9px] uppercase tracking-[0.3em] text-[#C5A059] hover:text-stone-900 transition-colors pt-4"
-            >
-              {t('contact.success.back', 'Send another message')} <ArrowRight size={12} />
+            <h3 className="font-playfair italic text-xl">{t('contact.success.title')}</h3>
+            <button onClick={() => setStatus("idle")} className="flex items-center gap-2 font-oswald text-[8px] uppercase tracking-[0.3em] text-[#C5A059] mx-auto">
+              {t('contact.success.back')} <ArrowRight size={10} />
             </button>
           </motion.div>
         )}

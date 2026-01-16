@@ -166,7 +166,8 @@
     "price": {
       "label": "Investment",
       "onRequest": "Price on request",
-      "perMonth": "/ mo."
+      "perMonth": "/ mo.",
+      "month": "month"
     },
     "actions": {
       "viewDetails": "View details",
@@ -176,6 +177,12 @@
     "imageFallback": "Property image unavailable",
     "preview": {
       "fallback_desc": "Explore this exclusive property selected by our agency."
+    },
+    "gallery": {
+      "photos": "Photos",
+      "default_title": "Exclusive Residence",
+      "esc_to_close": "Press ESC to close",
+      "exclusive_label": "Exclusive Selection"
     }
   },
   "propertyPreview": {
@@ -208,6 +215,16 @@
       "name": "Name",
       "email": "Email",
       "message": "Message"
+    },
+    "tabs": {
+      "description": "Description",
+      "details": "Details",
+      "location": "Location"
+    },
+    "sections": {
+      "admin": "Administration",
+      "technical": "Technical Details",
+      "features": "Features and Qualities"
     }
   },
   "filters": {
@@ -257,9 +274,19 @@
         "phone": "Phone",
         "message": "Message"
       },
+      "defaultMessage": "Hello, I would like to receive more information about property REF: {{ref}} with price {{price}}.",
       "submit": "Send enquiry",
       "success": "Thank you for your enquiry. We will contact you shortly.",
       "error": "An error occurred. Please try again."
     }
+  },
+  "footer": {
+    "vision": "Exceptional properties. Tailored guidance. A discreet real estate experience in Marbella.",
+    "menu": {
+      "title": "Navigation"
+    },
+    "rights": "All rights reserved.",
+    "legal": "Legal Notice",
+    "privacy": "Privacy Policy"
   }
 }
